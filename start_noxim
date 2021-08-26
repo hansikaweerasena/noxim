@@ -1,0 +1,1 @@
+docker run --volume /home/hansika/noxim/noxim:/noxim --volume /home/hansika/.noxim_bash_history:/root/.bash_history --rm -it noxim:stable bash
