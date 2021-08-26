@@ -75,7 +75,7 @@ build docker image from `util/Dockerfile` as follow:
 
 `docker build -t noxim:stable .`
 
-After that start up docker container with the cloned repository as attached volumme to docker using `start_noxim.sh`:
+After that start up docker container with the cloned repository as attached volume to docker using `start_noxim.sh`:
 
 Then you will be inside docker container, only at the first time run `util/install_dependencies_and_make_noxim.sh` to initialize local dependancies and build noxim.
 
