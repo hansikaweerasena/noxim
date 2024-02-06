@@ -60,7 +60,7 @@ if [[ $OSTYPE == 'darwin'* ]]; then
         git pull
         cd bin
     else 
-        git clone https://github.com/davidepatti/noxim
+        git clone https://github.com/hansikaweerasena/noxim
         echo -e $GREEN"noxim downloaded."$RESET
         cd noxim/bin
     fi
