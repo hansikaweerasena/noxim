@@ -47,7 +47,7 @@ If you are working on Ubuntu, you can install noxim and all the dependencies wit
 
 Similarly for macOS:
 
-    /bin/zsh -c "$(curl -fsSL https://raw.githubusercontent.com/davidepatti/noxim/master/other/setup/macos.zsh)"
+    /bin/zsh -c "$(curl -fsSL https://raw.githubusercontent.com/hansikaweerasena/noxim/master/other/setup/macos.zsh)"
 
 Or, to get just the latest master sources, you can run:
 
