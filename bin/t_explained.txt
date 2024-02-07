@@ -1,0 +1,1 @@
+0 3 0.01  => Traffic from node 0 to 3 at an injection rate of 0.002 (1 packet every 100 cycles)
