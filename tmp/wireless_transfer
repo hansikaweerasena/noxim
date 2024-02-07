@@ -1,0 +1,162 @@
+1422    NoC.Tile[00][00]_(#0).Router::routingFunction() --> Destination node 3 is directly connected to a reachable RadioHub
+1422    NoC.Tile[00][00]_(#0).Router::txProcess() -->  checking availability of Output[5] for Input[4][0] flit (H0, 0->3 VC 0)
+1422    NoC.Tile[00][00]_(#0).Router::txProcess() -->  reserving direction 5 for flit (H0, 0->3 VC 0)
+1422    NoC.Tile[00][00]_(#0).Router::txProcess() --> Input[4][0] forwarded to Output[5], flit: (H0, 0->3 VC 0)
+1423    NoC.tokenring::updateTokenPacket() --> *** Token of channel 0 has been assigned to Hub_0
+1423    NoC.Hub_0::tileToAntennaProcess() --> Reading (H0, 0->3 VC 0) from signal flit_rx[0]
+1423    NoC.Hub_0::tileToAntennaProcess() --> Storing (H0, 0->3 VC 0) on buffer_from_tile[0][0]
+1423    NoC.Tile[00][00]_(#0).Router::rxProcess() -->  Flit (B1, 0->3 VC 0) collected from Input[4][0]
+1424    NoC.Hub_0::txRadioProcessTokenPacket() --> *** [Ch0] Buffer_tx empty and no trasmission in progress, releasing token
+1424    NoC.Hub_0::tileToAntennaProcess() --> Reservation: buffer_from_tile[0][0] not empty
+1424    NoC.Hub_0::tileToAntennaProcess() --> Checking reservation availability of Channel 0 by Hub port[0][0] for flit (H0, 0->3 VC 0)
+1424    NoC.Hub_0::tileToAntennaProcess() --> Reservation of channel 0 from Hub port[0][0] by flit (H0, 0->3 VC 0)
+1424    NoC.Hub_0::tileToAntennaProcess() --> Flit (H0, 0->3 VC 0) moved from buffer_from_tile[0][0]  to buffer_tx[0]
+1424    NoC.Tile[00][00]_(#0).Router::txProcess() --> Input[4][0] forwarded to Output[5], flit: (B1, 0->3 VC 0)
+1425    NoC.tokenring::updateTokenPacket() --> *** Token of channel 0 has been assigned to Hub_1
+1425    NoC.Hub_0::tileToAntennaProcess() --> Reading (B1, 0->3 VC 0) from signal flit_rx[0]
+1425    NoC.Hub_0::tileToAntennaProcess() --> Storing (B1, 0->3 VC 0) on buffer_from_tile[0][0]
+1425    NoC.Tile[00][00]_(#0).Router::rxProcess() -->  Flit (B2, 0->3 VC 0) collected from Input[4][0]
+1426    NoC.Hub_0::tileToAntennaProcess() --> Reservation: buffer_from_tile[0][0] not empty
+1426    NoC.Hub_0::tileToAntennaProcess() --> Flit (B1, 0->3 VC 0) moved from buffer_from_tile[0][0]  to buffer_tx[0]
+1426    NoC.Hub_1::txRadioProcessTokenPacket() --> *** [Ch0] Buffer_tx empty and no trasmission in progress, releasing token
+1426    NoC.Tile[00][00]_(#0).Router::txProcess() --> Input[4][0] forwarded to Output[5], flit: (B2, 0->3 VC 0)
+1427    NoC.tokenring::updateTokenPacket() --> *** Token of channel 0 has been assigned to Hub_2
+1427    NoC.Hub_0::tileToAntennaProcess() --> Reading (B2, 0->3 VC 0) from signal flit_rx[0]
+1427    NoC.Hub_0::tileToAntennaProcess() --> Storing (B2, 0->3 VC 0) on buffer_from_tile[0][0]
+1427    NoC.Tile[00][00]_(#0).Router::rxProcess() -->  Flit (B3, 0->3 VC 0) collected from Input[4][0]
+1428    NoC.Hub_0::tileToAntennaProcess() --> Reservation: buffer_from_tile[0][0] not empty
+1428    NoC.Hub_0::tileToAntennaProcess() --> Flit (B2, 0->3 VC 0) moved from buffer_from_tile[0][0]  to buffer_tx[0]
+1428    NoC.Hub_2::txRadioProcessTokenPacket() --> *** [Ch0] Buffer_tx empty and no trasmission in progress, releasing token
+1428    NoC.Tile[00][00]_(#0).Router::txProcess() --> Input[4][0] forwarded to Output[5], flit: (B3, 0->3 VC 0)
+1429    NoC.tokenring::updateTokenPacket() --> *** Token of channel 0 has been assigned to Hub_3
+1429    NoC.Hub_0::tileToAntennaProcess() --> Reading (B3, 0->3 VC 0) from signal flit_rx[0]
+1429    NoC.Hub_0::tileToAntennaProcess() --> Storing (B3, 0->3 VC 0) on buffer_from_tile[0][0]
+1429    NoC.Tile[00][00]_(#0).Router::rxProcess() -->  Flit (B4, 0->3 VC 0) collected from Input[4][0]
+1430    NoC.Hub_0::tileToAntennaProcess() --> Reservation: buffer_from_tile[0][0] not empty
+1430    NoC.Hub_0::tileToAntennaProcess() --> Flit (B3, 0->3 VC 0) moved from buffer_from_tile[0][0]  to buffer_tx[0]
+1430    NoC.Hub_3::txRadioProcessTokenPacket() --> *** [Ch0] Buffer_tx empty and no trasmission in progress, releasing token
+1430    NoC.Tile[00][00]_(#0).Router::txProcess() --> Input[4][0] forwarded to Output[5], flit: (B4, 0->3 VC 0)
+1431    NoC.tokenring::updateTokenPacket() --> *** Token of channel 0 has been assigned to Hub_0
+1431    NoC.Hub_0::tileToAntennaProcess() --> Reading (B4, 0->3 VC 0) from signal flit_rx[0]
+1431    NoC.Hub_0::tileToAntennaProcess() --> Storing (B4, 0->3 VC 0) on buffer_from_tile[0][0]
+1431    NoC.Tile[00][00]_(#0).Router::rxProcess() -->  Flit (B5, 0->3 VC 0) collected from Input[4][0]
+1432    NoC.Hub_0::txRadioProcessTokenPacket() --> *** [Ch0] Requesting transmission event of flit (H0, 0->3 VC 0)
+1432    NoC.Hub_0::tileToAntennaProcess() --> Reservation: buffer_from_tile[0][0] not empty
+1432    NoC.Hub_0::tileToAntennaProcess() --> Buffer Full: Cannot move flit (B4, 0->3 VC 0) from buffer_from_tile[0] to buffer_tx[0]
+1432    NoC.Tile[00][00]_(#0).Router::txProcess() --> Input[4][0] forwarded to Output[5], flit: (B5, 0->3 VC 0)
+1432    NoC.Hub_0.init_0::thread_process() -->  *** Starting transmission of (H0, 0->3 VC 0) to reach HUB_3
+1433    NoC.Hub_0::txRadioProcessTokenPacket() --> *** [Ch0] Requesting transmission event of flit (H0, 0->3 VC 0)
+1433    NoC.Hub_0::tileToAntennaProcess() --> Reservation: buffer_from_tile[0][0] not empty
+1433    NoC.Hub_0::tileToAntennaProcess() --> Buffer Full: Cannot move flit (B4, 0->3 VC 0) from buffer_from_tile[0] to buffer_tx[0]
+1433    NoC.Hub_0::tileToAntennaProcess() --> Reading (B5, 0->3 VC 0) from signal flit_rx[0]
+1433    NoC.Hub_0::tileToAntennaProcess() --> Storing (B5, 0->3 VC 0) on buffer_from_tile[0][0]
+1433    NoC.Tile[00][00]_(#0).Router::rxProcess() -->  Flit (B6, 0->3 VC 0) collected from Input[4][0]
+1434    NoC.Hub_3.target_0::b_transport() --> *** [Ch0] Received: (H0, 0->3 VC 0)
+1434    NoC.Hub_3.target_0::b_transport() --> *** [Ch0] Flit (H0, 0->3 VC 0) moved to buffer_rx
+1434    NoC.Hub_0.init_0::thread_process() -->  *** waiting for transmissions
+1434    NoC.Hub_0::txRadioProcessTokenPacket() --> *** [Ch0] Requesting transmission event of flit (B1, 0->3 VC 0)
+1434    NoC.Hub_0::tileToAntennaProcess() --> Reservation: buffer_from_tile[0][0] not empty
+1434    NoC.Hub_0::tileToAntennaProcess() --> Flit (B4, 0->3 VC 0) moved from buffer_from_tile[0][0]  to buffer_tx[0]
+1434    NoC.Hub_3::antennaToTileProcess() -->  Checking reservation availability of output port 0 by channel 0 for flit (H0, 0->3 VC 0)
+1434    NoC.Hub_3::antennaToTileProcess() --> Reserving output port 0 by channel 0 for flit (H0, 0->3 VC 0)
+1434    NoC.Hub_3::antennaToTileProcess() --> *** [Ch0] Moving flit  (H0, 0->3 VC 0) from buffer_rx to buffer_to_tile[0][0]
+1434    NoC.Tile[00][00]_(#0).Router::txProcess() --> Input[4][0] forwarded to Output[5], flit: (B6, 0->3 VC 0)
+1434    NoC.Hub_0.init_0::thread_process() -->  *** Starting transmission of (B1, 0->3 VC 0) to reach HUB_3
+1435    NoC.Hub_0::txRadioProcessTokenPacket() --> *** [Ch0] Requesting transmission event of flit (B1, 0->3 VC 0)
+1435    NoC.Hub_0::tileToAntennaProcess() --> Reservation: buffer_from_tile[0][0] not empty
+1435    NoC.Hub_0::tileToAntennaProcess() --> Buffer Full: Cannot move flit (B5, 0->3 VC 0) from buffer_from_tile[0] to buffer_tx[0]
+1435    NoC.Hub_0::tileToAntennaProcess() --> Reading (B6, 0->3 VC 0) from signal flit_rx[0]
+1435    NoC.Hub_0::tileToAntennaProcess() --> Storing (B6, 0->3 VC 0) on buffer_from_tile[0][0]
+1435    NoC.Hub_3::antennaToTileProcess() --> Flit (H0, 0->3 VC 0) found on buffer_to_tile[0][0]
+1435    NoC.Hub_3::antennaToTileProcess() --> Flit (H0, 0->3 VC 0) moved from buffer_to_tile[0][0] to signal flit_tx[0]
+1435    NoC.Tile[00][00]_(#0).Router::rxProcess() -->  Flit (T7, 0->3 VC 0) collected from Input[4][0]
+1436    NoC.Hub_3.target_0::b_transport() --> *** [Ch0] Received: (B1, 0->3 VC 0)
+1436    NoC.Hub_3.target_0::b_transport() --> *** [Ch0] Flit (B1, 0->3 VC 0) moved to buffer_rx
+1436    NoC.Hub_0.init_0::thread_process() -->  *** waiting for transmissions
+1436    NoC.Hub_0::txRadioProcessTokenPacket() --> *** [Ch0] Requesting transmission event of flit (B2, 0->3 VC 0)
+1436    NoC.Hub_0::tileToAntennaProcess() --> Reservation: buffer_from_tile[0][0] not empty
+1436    NoC.Hub_0::tileToAntennaProcess() --> Flit (B5, 0->3 VC 0) moved from buffer_from_tile[0][0]  to buffer_tx[0]
+1436    NoC.Hub_3::antennaToTileProcess() --> *** [Ch0] Moving flit  (B1, 0->3 VC 0) from buffer_rx to buffer_to_tile[0][0]
+1436    NoC.Tile[00][00]_(#0).Router::txProcess() --> Input[4][0] forwarded to Output[5], flit: (T7, 0->3 VC 0)
+1436    NoC.Tile[01][01]_(#3).Router::rxProcess() -->  Flit (H0, 0->3 VC 0) collected from Input[5][0]
+1436    NoC.Hub_0.init_0::thread_process() -->  *** Starting transmission of (B2, 0->3 VC 0) to reach HUB_3
+1437    NoC.Hub_0::txRadioProcessTokenPacket() --> *** [Ch0] Requesting transmission event of flit (B2, 0->3 VC 0)
+1437    NoC.Hub_0::tileToAntennaProcess() --> Reservation: buffer_from_tile[0][0] not empty
+1437    NoC.Hub_0::tileToAntennaProcess() --> Buffer Full: Cannot move flit (B6, 0->3 VC 0) from buffer_from_tile[0] to buffer_tx[0]
+1437    NoC.Hub_0::tileToAntennaProcess() --> Reading (T7, 0->3 VC 0) from signal flit_rx[0]
+1437    NoC.Hub_0::tileToAntennaProcess() --> Storing (T7, 0->3 VC 0) on buffer_from_tile[0][0]
+1437    NoC.Hub_3::antennaToTileProcess() --> Flit (B1, 0->3 VC 0) found on buffer_to_tile[0][0]
+1437    NoC.Hub_3::antennaToTileProcess() --> Flit (B1, 0->3 VC 0) moved from buffer_to_tile[0][0] to signal flit_tx[0]
+1437    NoC.Tile[01][01]_(#3).Router::txProcess() -->  checking availability of Output[4] for Input[5][0] flit (H0, 0->3 VC 0)
+1437    NoC.Tile[01][01]_(#3).Router::txProcess() -->  reserving direction 4 for flit (H0, 0->3 VC 0)
+1437    NoC.Tile[01][01]_(#3).Router::txProcess() --> Input[5][0] forwarded to Output[4], flit: (H0, 0->3 VC 0)
+1437    NoC.Tile[01][01]_(#3).Router::txProcess() --> Consumed flit (H0, 0->3 VC 0)
+1438    NoC.Hub_3.target_0::b_transport() --> *** [Ch0] Received: (B2, 0->3 VC 0)
+1438    NoC.Hub_3.target_0::b_transport() --> *** [Ch0] Flit (B2, 0->3 VC 0) moved to buffer_rx
+1438    NoC.Hub_0.init_0::thread_process() -->  *** waiting for transmissions
+1438    NoC.Hub_0::txRadioProcessTokenPacket() --> *** [Ch0] Requesting transmission event of flit (B3, 0->3 VC 0)
+1438    NoC.Hub_0::tileToAntennaProcess() --> Reservation: buffer_from_tile[0][0] not empty
+1438    NoC.Hub_0::tileToAntennaProcess() --> Flit (B6, 0->3 VC 0) moved from buffer_from_tile[0][0]  to buffer_tx[0]
+1438    NoC.Hub_3::antennaToTileProcess() --> *** [Ch0] Moving flit  (B2, 0->3 VC 0) from buffer_rx to buffer_to_tile[0][0]
+1438    NoC.Tile[01][01]_(#3).Router::rxProcess() -->  Flit (B1, 0->3 VC 0) collected from Input[5][0]
+1438    NoC.Hub_0.init_0::thread_process() -->  *** Starting transmission of (B3, 0->3 VC 0) to reach HUB_3
+1439    NoC.Hub_0::txRadioProcessTokenPacket() --> *** [Ch0] Requesting transmission event of flit (B3, 0->3 VC 0)
+1439    NoC.Hub_0::tileToAntennaProcess() --> Reservation: buffer_from_tile[0][0] not empty
+1439    NoC.Hub_0::tileToAntennaProcess() --> Buffer Full: Cannot move flit (T7, 0->3 VC 0) from buffer_from_tile[0] to buffer_tx[0]
+1439    NoC.Hub_3::antennaToTileProcess() --> Flit (B2, 0->3 VC 0) found on buffer_to_tile[0][0]
+1439    NoC.Hub_3::antennaToTileProcess() --> Flit (B2, 0->3 VC 0) moved from buffer_to_tile[0][0] to signal flit_tx[0]
+1439    NoC.Tile[01][01]_(#3).Router::txProcess() --> Input[5][0] forwarded to Output[4], flit: (B1, 0->3 VC 0)
+1439    NoC.Tile[01][01]_(#3).Router::txProcess() --> Consumed flit (B1, 0->3 VC 0)
+1440    NoC.Hub_3.target_0::b_transport() --> *** [Ch0] Received: (B3, 0->3 VC 0)
+1440    NoC.Hub_3.target_0::b_transport() --> *** [Ch0] Flit (B3, 0->3 VC 0) moved to buffer_rx
+1440    NoC.Hub_0.init_0::thread_process() -->  *** waiting for transmissions
+1440    NoC.Hub_0::txRadioProcessTokenPacket() --> *** [Ch0] Requesting transmission event of flit (B4, 0->3 VC 0)
+1440    NoC.Hub_0::tileToAntennaProcess() --> Reservation: buffer_from_tile[0][0] not empty
+1440    NoC.Hub_0::tileToAntennaProcess() --> Flit (T7, 0->3 VC 0) moved from buffer_from_tile[0][0]  to buffer_tx[0]
+1440    NoC.Hub_3::antennaToTileProcess() --> *** [Ch0] Moving flit  (B3, 0->3 VC 0) from buffer_rx to buffer_to_tile[0][0]
+1440    NoC.Tile[01][01]_(#3).Router::rxProcess() -->  Flit (B2, 0->3 VC 0) collected from Input[5][0]
+1440    NoC.Hub_0.init_0::thread_process() -->  *** Starting transmission of (B4, 0->3 VC 0) to reach HUB_3
+1441    NoC.Hub_0::txRadioProcessTokenPacket() --> *** [Ch0] Requesting transmission event of flit (B4, 0->3 VC 0)
+1441    NoC.Hub_3::antennaToTileProcess() --> Flit (B3, 0->3 VC 0) found on buffer_to_tile[0][0]
+1441    NoC.Hub_3::antennaToTileProcess() --> Flit (B3, 0->3 VC 0) moved from buffer_to_tile[0][0] to signal flit_tx[0]
+1441    NoC.Tile[01][01]_(#3).Router::txProcess() --> Input[5][0] forwarded to Output[4], flit: (B2, 0->3 VC 0)
+1441    NoC.Tile[01][01]_(#3).Router::txProcess() --> Consumed flit (B2, 0->3 VC 0)
+1442    NoC.Hub_3.target_0::b_transport() --> *** [Ch0] Received: (B4, 0->3 VC 0)
+1442    NoC.Hub_3.target_0::b_transport() --> *** [Ch0] Flit (B4, 0->3 VC 0) moved to buffer_rx
+1442    NoC.Hub_0.init_0::thread_process() -->  *** waiting for transmissions
+1442    NoC.Hub_0::txRadioProcessTokenPacket() --> *** [Ch0] Requesting transmission event of flit (B5, 0->3 VC 0)
+1442    NoC.Hub_3::antennaToTileProcess() --> *** [Ch0] Moving flit  (B4, 0->3 VC 0) from buffer_rx to buffer_to_tile[0][0]
+1442    NoC.Tile[01][01]_(#3).Router::rxProcess() -->  Flit (B3, 0->3 VC 0) collected from Input[5][0]
+1442    NoC.Hub_0.init_0::thread_process() -->  *** Starting transmission of (B5, 0->3 VC 0) to reach HUB_3
+1443    NoC.Hub_0::txRadioProcessTokenPacket() --> *** [Ch0] Requesting transmission event of flit (B5, 0->3 VC 0)
+1443    NoC.Hub_3::antennaToTileProcess() --> Flit (B4, 0->3 VC 0) found on buffer_to_tile[0][0]
+1443    NoC.Hub_3::antennaToTileProcess() --> Flit (B4, 0->3 VC 0) moved from buffer_to_tile[0][0] to signal flit_tx[0]
+1443    NoC.Tile[01][01]_(#3).Router::txProcess() --> Input[5][0] forwarded to Output[4], flit: (B3, 0->3 VC 0)
+1443    NoC.Tile[01][01]_(#3).Router::txProcess() --> Consumed flit (B3, 0->3 VC 0)
+1444    NoC.Hub_3.target_0::b_transport() --> *** [Ch0] Received: (B5, 0->3 VC 0)
+1444    NoC.Hub_3.target_0::b_transport() --> *** [Ch0] Flit (B5, 0->3 VC 0) moved to buffer_rx
+1444    NoC.Hub_0.init_0::thread_process() -->  *** waiting for transmissions
+1444    NoC.Hub_0::txRadioProcessTokenPacket() --> *** [Ch0] Requesting transmission event of flit (B6, 0->3 VC 0)
+1444    NoC.Hub_3::antennaToTileProcess() --> *** [Ch0] Moving flit  (B5, 0->3 VC 0) from buffer_rx to buffer_to_tile[0][0]
+1444    NoC.Tile[01][01]_(#3).Router::rxProcess() -->  Flit (B4, 0->3 VC 0) collected from Input[5][0]
+1444    NoC.Hub_0.init_0::thread_process() -->  *** Starting transmission of (B6, 0->3 VC 0) to reach HUB_3
+1445    NoC.Hub_0::txRadioProcessTokenPacket() --> *** [Ch0] Requesting transmission event of flit (B6, 0->3 VC 0)
+1445    NoC.Hub_3::antennaToTileProcess() --> Flit (B5, 0->3 VC 0) found on buffer_to_tile[0][0]
+1445    NoC.Hub_3::antennaToTileProcess() --> Flit (B5, 0->3 VC 0) moved from buffer_to_tile[0][0] to signal flit_tx[0]
+1445    NoC.Tile[01][01]_(#3).Router::txProcess() --> Input[5][0] forwarded to Output[4], flit: (B4, 0->3 VC 0)
+1445    NoC.Tile[01][01]_(#3).Router::txProcess() --> Consumed flit (B4, 0->3 VC 0)
+1446    NoC.Hub_3.target_0::b_transport() --> *** [Ch0] Received: (B6, 0->3 VC 0)
+1446    NoC.Hub_3.target_0::b_transport() --> *** [Ch0] Flit (B6, 0->3 VC 0) moved to buffer_rx
+1446    NoC.Hub_0.init_0::thread_process() -->  *** waiting for transmissions
+1446    NoC.Hub_0::txRadioProcessTokenPacket() --> *** [Ch0] Requesting transmission event of flit (T7, 0->3 VC 0)
+1446    NoC.Hub_3::antennaToTileProcess() --> *** [Ch0] Moving flit  (B6, 0->3 VC 0) from buffer_rx to buffer_to_tile[0][0]
+1446    NoC.Tile[01][01]_(#3).Router::rxProcess() -->  Flit (B5, 0->3 VC 0) collected from Input[5][0]
+1446    NoC.Hub_0.init_0::thread_process() -->  *** Starting transmission of (T7, 0->3 VC 0) to reach HUB_3
+1447    NoC.Hub_0::txRadioProcessTokenPacket() --> *** [Ch0] Requesting transmission event of flit (T7, 0->3 VC 0)
+1447    NoC.Hub_3::antennaToTileProcess() --> Flit (B6, 0->3 VC 0) found on buffer_to_tile[0][0]
+1447    NoC.Hub_3::antennaToTileProcess() --> Flit (B6, 0->3 VC 0) moved from buffer_to_tile[0][0] to signal flit_tx[0]
+1447    NoC.Tile[01][01]_(#3).Router::txProcess() --> Input[5][0] forwarded to Output[4], flit: (B5, 0->3 VC 0)
+1447    NoC.Tile[01][01]_(#3).Router::txProcess() --> Consumed flit (B5, 0->3 VC 0)
+1448    NoC.Hub_3.target_0::b_transport() --> *** [Ch0] Received: (T7, 0->3 VC 0)
+1448    NoC.Hub_3.target_0::b_transport() --> *** [Ch0] Flit (T7, 0->3 VC 0) moved to buffer_rx
+1448    NoC.Hub_0.init_0::thread_process() --> *** [Ch0] tail flit sent (T7, 0->3 VC 0), releasing token
