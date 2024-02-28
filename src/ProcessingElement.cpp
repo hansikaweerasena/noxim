@@ -24,6 +24,9 @@ void ProcessingElement::rxProcess()
     } else {
 	if (req_rx.read() == 1 - current_level_rx) {
 	    Flit flit_tmp = flit_rx.read();
+        if (flit_tmp.flit_type == FLIT_TYPE_TAIL) {
+            LOG << "*** [des" << flit_tmp.dst_id << "] from " << flit_tmp.src_id << ", src" << flit_tmp<< endl;
+        }
 	    current_level_rx = 1 - current_level_rx;	// Negate the old value for Alternating Bit Protocol (ABP)
 	}
 	ack_rx.write(current_level_rx);
