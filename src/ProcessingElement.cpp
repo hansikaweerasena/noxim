@@ -23,6 +23,10 @@ void ProcessingElement::rxProcess()
 	current_level_rx = 0;
     } else {
 	if (req_rx.read() == 1 - current_level_rx) {
+        // hanz : Look at the correct trace file and look at the next in message and add it to another trace file indexed queue in GlobalTraceController
+        // hanz : the new queue will have the packet structure with the which cycle to send the next message ???
+        // hanz : Should it be here or there (Global Trace Controller), because two traces can have same timestamp for next in messages and another fact we know it
+        // should be from this Processing element
 	    Flit flit_tmp = flit_rx.read();
         if (flit_tmp.flit_type == FLIT_TYPE_TAIL) {
             LOG << "*** [des" << flit_tmp.dst_id << "] from " << flit_tmp.src_id << ", src" << flit_tmp<< endl;
