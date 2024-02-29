@@ -29,6 +29,10 @@ struct Record {
     int delay;
 };
 
+struct FirstInMsg {
+    Message in_msg;
+    int trace_id;
+};
 
 class GlobalTraceInjector {
 
@@ -42,16 +46,19 @@ class GlobalTraceInjector {
     // Returns the record with next in message to network depend on the out message
     Record getNextRecord(const int trace_id,
 			       const int src,
-			       const int des,
+			       const int dest,
                    const int addr);
+
+    // Returns the first in messages and trace id for a given src
+    std::vector<FirstInMsg> getFirstInMsgs(const int src);
 
   private:
 
-    Message parseMessage(const std::string& msgPart)
+    Message parseMessage(const std::string& msgPart);
 
-    std::queue<Record> readData(const string& filename)
+    std::queue<Record> readData(const string& filename);
 
-    vector<std::queue<Record>> traces;
+    std::vector<std::queue<Record>> traces;
 };
 
 #endif

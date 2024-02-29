@@ -11,6 +11,7 @@ GlobalTraceInjector::GlobalTraceInjector()
 {
 }
 
+// Load traffic table from file. Returns true if ok, false otherwise
 bool GlobalTraceInjector::load(const int no_of_traces)
 {
     vector<string> filenames;
@@ -29,7 +30,7 @@ bool GlobalTraceInjector::load(const int no_of_traces)
             traces.push_back(std::move(recordsQueue));
         } catch (const std::runtime_error& e) {
             cerr << "Error processing " << filename << ": " << e.what() << endl;
-            return false
+            return false;
         }
     }
 
@@ -37,7 +38,7 @@ bool GlobalTraceInjector::load(const int no_of_traces)
 }
 
 
-
+// Parse a message from a string
 Message GlobalTraceInjector::parseMessage(const std::string& msgPart) {
     Message msg;
     msg.valid = false; // Default to false
@@ -72,6 +73,7 @@ Message GlobalTraceInjector::parseMessage(const std::string& msgPart) {
 
     return msg;
 }
+
 
 std::queue<Record> GlobalTraceInjector::readData(const string& filename) {
     ifstream file(filename);
@@ -116,27 +118,51 @@ std::queue<Record> GlobalTraceInjector::readData(const string& filename) {
 
 Record GlobalTraceInjector::getNextRecord(const int trace_id,
                                           const int src,
-                                          const int des,
+                                          const int dest,
                                           const int addr)
 {
-    if (index >= 0 && index < traces.size()) {
-        std::queue<Record>& targetQueue = traces[index];
+    if (trace_id >= 0 && trace_id < traces.size()) {
+        std::queue<Record>& targetQueue = traces[trace_id];
 
         if (!targetQueue.empty()) {
-            const Record& frontRecord = specificQueue.front();
+            const Record& frontRecord = targetQueue.front();
 
-            if (frontRecord.out_msg.src == src && frontRecord.out_msg.src == src)
-
-
-            std::cout << "Front record of queue " << index + 1 << " out_msg src: " << frontRecord.out_msg.src << std::endl;
-
-            // If you need to remove the front record
-            // specificQueue.pop();
+            if (frontRecord.out_msg.src == src && frontRecord.out_msg.dest == dest && frontRecord.out_msg.addr == addr) {
+                Record returnRecord = frontRecord;
+                targetQueue.pop();
+                return returnRecord;
+            } else {
+                throw std::runtime_error("No matching out message found.");
+            }
         } else {
             throw std::runtime_error("Queue is empty.");
         }
     } else {
         std::cerr << "Index out of range. Invalid Trace ID" << std::endl;
     }
+
+}
+
+
+/*
+// Returns the first in messages and trace id for a given src
+*/
+std::vector<FirstInMsg> GlobalTraceInjector::getFirstInMsgs(const int src)
+{
+    std::vector<FirstInMsg> firstInMsgs;
+    for (const auto& queue : traces) {
+        if (!queue.empty()) {
+            const Record& frontRecord = queue.front();
+
+            if (frontRecord.in_msg.src == src && !frontRecord.out_msg.valid) {
+                FirstInMsg firstInMsg;
+                firstInMsg.in_msg = frontRecord.in_msg;
+                firstInMsg.trace_id = &queue - &traces[0]; // Get the index of the queue in the traces vector
+                firstInMsgs.push_back(firstInMsg);
+            }
+        }
+    }
+
+    return firstInMsgs;
 
 }
