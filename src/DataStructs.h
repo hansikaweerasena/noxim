@@ -29,6 +29,11 @@ enum FlitType {
     FLIT_TYPE_HEAD, FLIT_TYPE_BODY, FLIT_TYPE_TAIL
 };
 
+// FlitDataType -- Flit data type enumeration
+enum FlitDataType {
+    EXCLUSIVE_UNBLOCK, OTHER
+};
+
 // Payload -- Payload definition
 struct Payload {
     sc_uint<32> data;	// Bus for the data to be exchanged
@@ -46,6 +51,7 @@ struct Packet {
     int size;
     int flit_left;		// Number of remaining flits inside the packet
     bool use_low_voltage_path;
+    int trace_no;
 
     // Constructors
     Packet() { }
@@ -127,6 +133,8 @@ struct Flit {
     double timestamp;		// Unix timestamp at packet generation
     int hop_no;			// Current number of hops from source to destination
     bool use_low_voltage_path;
+    FlitDataType data_type = OTHER;
+    int trace_no;
 
     int hub_relay_node;
 
