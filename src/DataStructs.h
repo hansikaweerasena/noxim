@@ -30,7 +30,7 @@ enum FlitType {
 };
 
 // FlitDataType -- Flit data type enumeration
-enum FlitDataType {
+enum PayloadType {
     EXCLUSIVE_UNBLOCK, OTHER
 };
 
@@ -51,7 +51,9 @@ struct Packet {
     int size;
     int flit_left;		// Number of remaining flits inside the packet
     bool use_low_voltage_path;
-    int trace_no;
+    PayloadType payload_type = OTHER;
+    int trace_id;
+    int addr;
 
     // Constructors
     Packet() { }
@@ -74,7 +76,7 @@ struct Packet {
 struct FuturePacket
 {
     Packet packet;
-    double injecttion_cycle;
+    double injection_cycle;
 };
 
 
@@ -140,8 +142,9 @@ struct Flit {
     double timestamp;		// Unix timestamp at packet generation
     int hop_no;			// Current number of hops from source to destination
     bool use_low_voltage_path;
-    FlitDataType data_type = OTHER;
-    int trace_no;
+    PayloadType payload_type = OTHER;
+    int trace_id;
+    int addr;
 
     int hub_relay_node;
 

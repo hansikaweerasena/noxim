@@ -23,12 +23,9 @@ void ProcessingElement::rxProcess()
 	current_level_rx = 0;
     } else {
 	if (req_rx.read() == 1 - current_level_rx) {
-        // hanz : Look at the correct trace file and look at the next in message and add it to another trace file indexed queue in GlobalTraceController
-        // hanz : the new queue will have the packet structure with the which cycle to send the next message ???
-        // hanz : Should it be here or there (Global Trace Controller), because two traces can have same timestamp for next in messages and another fact we know it
-        // should be from this Processing element
 	    Flit flit_tmp = flit_rx.read();
-        if (flit_tmp.flit_type == FLIT_TYPE_TAIL) {
+        if (GlobalParams::traffic_distribution == TRAFFIC_TRACE_BASED && flit_tmp.flit_type == FLIT_TYPE_TAIL) {
+            injectFuturePackets(flit_tmp);
             LOG << "*** [des" << flit_tmp.dst_id << "] from " << flit_tmp.src_id << ", src" << flit_tmp<< endl;
         }
 	    current_level_rx = 1 - current_level_rx;	// Negate the old value for Alternating Bit Protocol (ABP)
@@ -36,6 +33,39 @@ void ProcessingElement::rxProcess()
 	ack_rx.write(current_level_rx);
     }
 }
+
+// Inject future packets to the future_packets queue based on the out tail flit
+void ProcessingElement::injectFuturePackets(const Flit & out_flit){
+    try {
+        Record nextRecord = trace_injector->getNextRecord(out_flit.trace_id, out_flit.src_id, out_flit.dst_id, out_flit.addr);
+        FuturePacket future_packet;
+        int vc = randInt(0,GlobalParams::n_virtual_channels-1);
+        future_packet.packet.make(nextRecord.in_msg.src, nextRecord.in_msg.dest, vc, -1, 5); //TODO: get the size from the trace file
+        future_packet.packet.trace_id = out_flit.trace_id;
+        future_packet.packet.addr = nextRecord.in_msg.addr;
+        if (nextRecord.in_msg.type == "EXCLSUIVE_UNBLOCK") {
+            future_packet.packet.payload_type = EXCLUSIVE_UNBLOCK;
+        } else {
+            future_packet.packet.payload_type = OTHER;
+        }
+        double now = sc_time_stamp().to_double() / GlobalParams::clock_period_ps;
+        future_packet.injection_cycle = now + nextRecord.delay;
+        future_packets.push(future_packet);
+        // If in packet is EXCLUSIVE_UNBLOCK, then we need to inject the next packet in the same cycle
+        if (nextRecord.in_msg.type == "EXCLSUIVE_UNBLOCK") {
+            injectFuturePackets(out_flit);
+        } 
+
+        } catch (const std::runtime_error& e) {
+            std::string errorMessage = e.what();
+            if (errorMessage == "Queue is empty.") {
+                LOG << "Queue" << out_flit.trace_id << "is empty." << std::endl;
+            } else {
+                std::cerr << "Error: " << e.what() << std::endl;
+            }
+        }
+}
+
 
 void ProcessingElement::txProcess()
 {
@@ -120,7 +150,7 @@ bool ProcessingElement::canShot(Packet & packet)
 
     double now = sc_time_stamp().to_double() / GlobalParams::clock_period_ps;
 
-    if (GlobalParams::traffic_distribution != TRAFFIC_TABLE_BASED) {
+    if (GlobalParams::traffic_distribution != TRAFFIC_TABLE_BASED || GlobalParams::traffic_distribution != TRAFFIC_TRACE_BASED) {
 	if (!transmittedAtPreviousCycle)
 	    threshold = GlobalParams::packet_injection_rate;
 	else
@@ -149,7 +179,7 @@ bool ProcessingElement::canShot(Packet & packet)
             exit(-1);
         }
 	}
-    } else {			// Table based communication traffic
+    } else if (GlobalParams::traffic_distribution != TRAFFIC_TABLE_BASED) {			// Table based communication traffic
 	if (never_transmit)
 	    return false;
 
@@ -169,6 +199,8 @@ bool ProcessingElement::canShot(Packet & packet)
 		}
 	    }
 	}
+    } else{ //Trace based communication traffic
+
     }
 
     return shot;

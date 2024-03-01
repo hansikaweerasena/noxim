@@ -79,6 +79,8 @@ SC_MODULE(ProcessingElement)
     int findRandomDestination(int local_id,int hops);
     unsigned int getQueueSize() const;
 
+    void injectFuturePackets(const Flit & flit);
+
     // Constructor
     SC_CTOR(ProcessingElement) {
 	SC_METHOD(rxProcess);
