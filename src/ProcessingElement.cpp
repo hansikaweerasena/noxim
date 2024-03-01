@@ -200,7 +200,18 @@ bool ProcessingElement::canShot(Packet & packet)
 	    }
 	}
     } else{ //Trace based communication traffic
-
+        if(!future_packets.empty()){
+            FuturePacket future_packet = future_packets.front();
+            if (future_packet.injection_cycle <= now) {
+                packet = future_packet.packet;
+                future_packets.pop();
+                shot = true;
+            }else{
+                 shot = false;
+            }
+        }else{
+            shot = false;
+        }
     }
 
     return shot;
