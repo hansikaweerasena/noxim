@@ -71,6 +71,13 @@ struct Packet {
     }
 };
 
+struct FuturePacket
+{
+    Packet packet;
+    double injecttion_cycle;
+};
+
+
 // RouteData -- data required to perform routing
 struct RouteData {
     int current_id;

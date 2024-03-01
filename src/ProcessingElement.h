@@ -46,6 +46,7 @@ SC_MODULE(ProcessingElement)
     bool current_level_tx;	// Current level for Alternating Bit Protocol (ABP)
     queue < Packet > packet_queue;	// Local queue of packets
     bool transmittedAtPreviousCycle;	// Used for distributions with memory
+    queue< FuturePacket > future_packets;	// Queue of future packets in future cycles
 
     // Functions
     void rxProcess();		// The receiving process
