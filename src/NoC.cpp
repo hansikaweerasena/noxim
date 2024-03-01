@@ -119,6 +119,10 @@ void NoC::buildCommon()
 	// Check for traffic table availability
 	if (GlobalParams::traffic_distribution == TRAFFIC_TABLE_BASED)
 		assert(gttable.load(GlobalParams::traffic_table_filename.c_str()));
+	
+	// Check for trace file availability
+	if (GlobalParams::traffic_distribution == TRAFFIC_TRACE_BASED)
+		assert(gtinjector.load(GlobalParams::traffic_no_trace_files));
 
 	// Var to track Hub connected ports
 	hub_connected_ports = (int *) calloc(GlobalParams::hub_configuration.size(), sizeof(int));
@@ -204,6 +208,7 @@ void NoC::buildButterfly()
 			// Tell to the PE its coordinates
 			t[i][j]->pe->local_id = tile_id;
 			t[i][j]->pe->traffic_table = &gttable;	// Needed to choose destination
+			t[i][j]->pe->trace_injector = &gtinjector;	// Needed to inject traces
 			t[i][j]->pe->never_transmit = true;
 
 			// Map clock and reset
@@ -539,6 +544,12 @@ void NoC::buildButterfly()
 		else
 			core[i]->pe->never_transmit = false;
 
+		// Check for trace file availability
+		if (GlobalParams::traffic_distribution == TRAFFIC_TRACE_BASED)
+		{
+			core[i]->pe->trace_injector = &gtinjector;	// Needed to inject traces
+		}		
+
 		// Map clock and reset
 		core[i]->clock(clock);
 		core[i]->reset(reset);
@@ -853,6 +864,7 @@ void NoC::buildBaseline()
 	    // Tell to the PE its coordinates
 	    t[i][j]->pe->local_id = tile_id;
 	    t[i][j]->pe->traffic_table = &gttable;	// Needed to choose destination
+		t[i][j]->pe->trace_injector = &gtinjector;	// Needed to inject traces
 	    t[i][j]->pe->never_transmit = true;
 
 	    // Map clock and reset
@@ -1302,6 +1314,12 @@ void NoC::buildBaseline()
 	else
 	    core[i]->pe->never_transmit = false;
 
+	// check for trace injector availability
+	if (GlobalParams::traffic_distribution == TRAFFIC_TABLE_BASED)
+	{
+	    core[i]->pe->trace_injector = &gtinjector;	// Needed to inject traces
+	}
+
 	// Map clock and reset
 	core[i]->clock(clock);
 	core[i]->reset(reset);
@@ -1585,6 +1603,7 @@ void NoC::buildOmega()
 			// Tell to the PE its coordinates
 			t[i][j]->pe->local_id = tile_id;
 			t[i][j]->pe->traffic_table = &gttable;	// Needed to choose destination
+			t[i][j]->pe->trace_injector = &gtinjector;	// Needed to inject traces
 			t[i][j]->pe->never_transmit = true;
 
 			// Map clock and reset
@@ -1932,6 +1951,13 @@ void NoC::buildOmega()
 		else
 			core[i]->pe->never_transmit = false;
 
+		// Check for traffic trace availability
+		if (GlobalParams::traffic_distribution == TRAFFIC_TRACE_BASED)
+		{
+			core[i]->pe->trace_injector = &gtinjector;	// Needed to inject traces
+		}
+		
+
 		// Map clock and reset
 		core[i]->clock(clock);
 		core[i]->reset(reset);
@@ -2209,6 +2235,12 @@ void NoC::buildMesh()
 		}
 		else
 			t[i][j]->pe->never_transmit = false;
+		
+		// Check for traffic trace availability
+		if (GlobalParams::traffic_distribution == TRAFFIC_TRACE_BASED)
+		{
+			t[i][j]->pe->trace_injector = &gtinjector;	// Needed to inject traces
+		}
 
 	    // Map clock and reset
 	    t[i][j]->clock(clock);

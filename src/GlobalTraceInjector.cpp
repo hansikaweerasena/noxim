@@ -17,7 +17,7 @@ bool GlobalTraceInjector::load(const int no_of_traces)
     vector<string> filenames;
 
     // Generate filenames based on the number of files
-    for (int i = 1; i <= no_of_traces; ++i) {
+    for (int i = 0; i < no_of_traces; ++i) {
         stringstream ss;
         ss << "data" << i << ".txt";
         filenames.push_back(ss.str());

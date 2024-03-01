@@ -16,6 +16,7 @@
 
 #include "DataStructs.h"
 #include "GlobalTrafficTable.h"
+#include "GlobalTraceInjector.h"
 #include "Utils.h"
 
 using namespace std;
@@ -62,6 +63,7 @@ SC_MODULE(ProcessingElement)
     Packet trafficULocal();	// Random with locality
 
     GlobalTrafficTable *traffic_table;	// Reference to the Global traffic Table
+    GlobalTraceInjector *trace_injector;	// Reference to the Global trace injector
     bool never_transmit;	// true if the PE does not transmit any packet 
     //  (valid only for the table based traffic)
 
