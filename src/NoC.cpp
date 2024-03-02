@@ -208,7 +208,7 @@ void NoC::buildButterfly()
 			// Tell to the PE its coordinates
 			t[i][j]->pe->local_id = tile_id;
 			t[i][j]->pe->traffic_table = &gttable;	// Needed to choose destination
-			t[i][j]->pe->initTraceInjector(gtinjector)	// Needed to inject traces
+			t[i][j]->pe->initTraceInjector(gtinjector);	// Needed to inject traces
 			t[i][j]->pe->never_transmit = true;
 
 			// Map clock and reset
