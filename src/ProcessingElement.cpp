@@ -226,7 +226,7 @@ bool ProcessingElement::canShot(Packet & packet)
             FuturePacket future_packet = future_packets.front();
             if (future_packet.injection_cycle <= now) {
                 packet = future_packet.packet;
-                packet.ts = now;
+                packet.timestamp = now;
                 future_packets.pop();
                 shot = true;
             }else{
