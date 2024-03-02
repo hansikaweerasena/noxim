@@ -34,10 +34,6 @@ void ProcessingElement:: initTraceInjector(GlobalTraceInjector& global_trace_inj
             }
             packet_queue.push(packet);
         }
-
-
-        
-        packet_queue.push(first_in_msgs[0].in_msg);
 }
 
 void ProcessingElement::rxProcess()
