@@ -16,6 +16,30 @@ int ProcessingElement::randInt(int min, int max)
 	(int) ((double) (max - min + 1) * rand() / (RAND_MAX + 1.0));
 }
 
+void ProcessingElement:: initTraceInjector(GlobalTraceInjector& global_trace_injector){
+    if (GlobalParams::traffic_distribution == TRAFFIC_TRACE_BASED) {
+        trace_injector = &global_trace_injector;
+        std::vector<FirstInMsg> first_in_msgs = trace_injector->getFirstInMsgs(local_id);
+        double now = sc_time_stamp().to_double() / GlobalParams::clock_period_ps;
+        // Iterate through the first_in_msgs and convert it to packets and inject the packets to the packets queue
+        for (size_t i = 0; i < first_in_msgs.size(); i++) {
+            Packet packet;
+            packet.make(first_in_msgs[i].in_msg.src, first_in_msgs[i].in_msg.dest, randInt(0,GlobalParams::n_virtual_channels-1), now, 5); //TODO: get the size from the trace file
+            packet.trace_id = first_in_msgs[i].trace_id;
+            packet.addr = first_in_msgs[i].in_msg.addr;
+            if (first_in_msgs[i].in_msg.type == "EXCLSUIVE_UNBLOCK") {
+                packet.payload_type = EXCLUSIVE_UNBLOCK;
+            } else {
+                packet.payload_type = OTHER;
+            }
+            packet_queue.push(packet);
+        }
+
+
+        
+        packet_queue.push(first_in_msgs[0].in_msg);
+}
+
 void ProcessingElement::rxProcess()
 {
     if (reset.read()) {
@@ -204,6 +228,7 @@ bool ProcessingElement::canShot(Packet & packet)
             FuturePacket future_packet = future_packets.front();
             if (future_packet.injection_cycle <= now) {
                 packet = future_packet.packet;
+                packet.ts = now;
                 future_packets.pop();
                 shot = true;
             }else{

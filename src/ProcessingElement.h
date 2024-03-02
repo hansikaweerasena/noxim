@@ -81,6 +81,8 @@ SC_MODULE(ProcessingElement)
 
     void injectFuturePackets(const Flit & flit);
 
+    void initTraceInjector(GlobalTraceInjector& global_trace_injector);
+
     // Constructor
     SC_CTOR(ProcessingElement) {
 	SC_METHOD(rxProcess);

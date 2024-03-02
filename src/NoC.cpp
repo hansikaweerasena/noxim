@@ -208,7 +208,7 @@ void NoC::buildButterfly()
 			// Tell to the PE its coordinates
 			t[i][j]->pe->local_id = tile_id;
 			t[i][j]->pe->traffic_table = &gttable;	// Needed to choose destination
-			t[i][j]->pe->trace_injector = &gtinjector;	// Needed to inject traces
+			t[i][j]->pe->initTraceInjector(gtinjector)	// Needed to inject traces
 			t[i][j]->pe->never_transmit = true;
 
 			// Map clock and reset
@@ -547,7 +547,7 @@ void NoC::buildButterfly()
 		// Check for trace file availability
 		if (GlobalParams::traffic_distribution == TRAFFIC_TRACE_BASED)
 		{
-			core[i]->pe->trace_injector = &gtinjector;	// Needed to inject traces
+			core[i]->pe->initTraceInjector(gtinjector);	// Needed to inject traces
 		}		
 
 		// Map clock and reset
@@ -864,7 +864,7 @@ void NoC::buildBaseline()
 	    // Tell to the PE its coordinates
 	    t[i][j]->pe->local_id = tile_id;
 	    t[i][j]->pe->traffic_table = &gttable;	// Needed to choose destination
-		t[i][j]->pe->trace_injector = &gtinjector;	// Needed to inject traces
+		t[i][j]->pe->initTraceInjector(gtinjector);	// Needed to inject traces
 	    t[i][j]->pe->never_transmit = true;
 
 	    // Map clock and reset
@@ -1317,7 +1317,7 @@ void NoC::buildBaseline()
 	// check for trace injector availability
 	if (GlobalParams::traffic_distribution == TRAFFIC_TABLE_BASED)
 	{
-	    core[i]->pe->trace_injector = &gtinjector;	// Needed to inject traces
+	    core[i]->pe->initTraceInjector(gtinjector);	// Needed to inject traces
 	}
 
 	// Map clock and reset
@@ -1603,7 +1603,7 @@ void NoC::buildOmega()
 			// Tell to the PE its coordinates
 			t[i][j]->pe->local_id = tile_id;
 			t[i][j]->pe->traffic_table = &gttable;	// Needed to choose destination
-			t[i][j]->pe->trace_injector = &gtinjector;	// Needed to inject traces
+			t[i][j]->pe->initTraceInjector(gtinjector);	// Needed to inject traces
 			t[i][j]->pe->never_transmit = true;
 
 			// Map clock and reset
@@ -1954,7 +1954,7 @@ void NoC::buildOmega()
 		// Check for traffic trace availability
 		if (GlobalParams::traffic_distribution == TRAFFIC_TRACE_BASED)
 		{
-			core[i]->pe->trace_injector = &gtinjector;	// Needed to inject traces
+			core[i]->pe->initTraceInjector(gtinjector);	// Needed to inject traces
 		}
 		
 
@@ -2239,7 +2239,7 @@ void NoC::buildMesh()
 		// Check for traffic trace availability
 		if (GlobalParams::traffic_distribution == TRAFFIC_TRACE_BASED)
 		{
-			t[i][j]->pe->trace_injector = &gtinjector;	// Needed to inject traces
+			t[i][j]->pe->initTraceInjector(gtinjector);	// Needed to inject traces
 		}
 
 	    // Map clock and reset

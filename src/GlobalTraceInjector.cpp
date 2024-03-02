@@ -104,18 +104,7 @@ std::queue<Record> GlobalTraceInjector::readData(const string& filename) {
 }
 
 
-// TODO: use this kind of exception handling when using this
-//try {
-//// Code that may throw a runtime_error
-//} catch (const std::runtime_error& e) {
-//std::string errorMessage = e.what();
-//if (errorMessage == "Queue is empty.") {
-//// Handle empty queue specifically
-//} else {
-//// Handle other runtime errors
-//}
-//}
-
+// Returns the next record for a given trace id
 Record GlobalTraceInjector::getNextRecord(const int trace_id,
                                           const int src,
                                           const int dest,
