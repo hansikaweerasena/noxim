@@ -16,7 +16,8 @@ int ProcessingElement::randInt(int min, int max)
 	(int) ((double) (max - min + 1) * rand() / (RAND_MAX + 1.0));
 }
 
-void ProcessingElement:: initTraceInjector(GlobalTraceInjector& global_trace_injector){
+void ProcessingElement::initTraceInjector(GlobalTraceInjector& global_trace_injector)
+{
     if (GlobalParams::traffic_distribution == TRAFFIC_TRACE_BASED) {
         trace_injector = &global_trace_injector;
         std::vector<FirstInMsg> first_in_msgs = trace_injector->getFirstInMsgs(local_id);
@@ -34,6 +35,7 @@ void ProcessingElement:: initTraceInjector(GlobalTraceInjector& global_trace_inj
             }
             packet_queue.push(packet);
         }
+    }
 }
 
 void ProcessingElement::rxProcess()
