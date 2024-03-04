@@ -139,7 +139,7 @@ Record GlobalTraceInjector::getNextRecord(const int trace_id,
 std::vector<FirstInMsg> GlobalTraceInjector::getFirstInMsgs(const int src)
 {
     std::vector<FirstInMsg> firstInMsgs;
-    for (const auto& queue : traces) {
+    for (auto& queue : traces) {
         if (!queue.empty()) {
             const Record& frontRecord = queue.front();
 
@@ -148,6 +148,7 @@ std::vector<FirstInMsg> GlobalTraceInjector::getFirstInMsgs(const int src)
                 firstInMsg.in_msg = frontRecord.in_msg;
                 firstInMsg.trace_id = &queue - &traces[0]; // Get the index of the queue in the traces vector
                 firstInMsgs.push_back(firstInMsg);
+                queue.pop();
             }
         }
     }
