@@ -16,28 +16,6 @@ int ProcessingElement::randInt(int min, int max)
 	(int) ((double) (max - min + 1) * rand() / (RAND_MAX + 1.0));
 }
 
-void ProcessingElement::initTraceInjector(GlobalTraceInjector& global_trace_injector)
-{
-    if (GlobalParams::traffic_distribution == TRAFFIC_TRACE_BASED) {
-        trace_injector = &global_trace_injector;
-        std::vector<FirstInMsg> first_in_msgs = trace_injector->getFirstInMsgs(local_id);
-        double now = sc_time_stamp().to_double() / GlobalParams::clock_period_ps;
-        // Iterate through the first_in_msgs and convert it to packets and inject the packets to the packets queue
-        for (size_t i = 0; i < first_in_msgs.size(); i++) {
-            Packet packet;
-            packet.make(first_in_msgs[i].in_msg.src, first_in_msgs[i].in_msg.dest, randInt(0,GlobalParams::n_virtual_channels-1), now, 5); //TODO: get the size from the trace file
-            packet.trace_id = first_in_msgs[i].trace_id;
-            packet.addr = first_in_msgs[i].in_msg.addr;
-            if (first_in_msgs[i].in_msg.type == "EXCLSUIVE_UNBLOCK") {
-                packet.payload_type = EXCLUSIVE_UNBLOCK;
-            } else {
-                packet.payload_type = OTHER;
-            }
-            packet_queue.push(packet);
-        }
-    }
-}
-
 void ProcessingElement::rxProcess()
 {
     if (reset.read()) {
@@ -53,6 +31,29 @@ void ProcessingElement::rxProcess()
 	    current_level_rx = 1 - current_level_rx;	// Negate the old value for Alternating Bit Protocol (ABP)
 	}
 	ack_rx.write(current_level_rx);
+    }
+}
+
+void ProcessingElement::initTraceInjector(GlobalTraceInjector& global_trace_injector)
+{
+    if (GlobalParams::traffic_distribution == TRAFFIC_TRACE_BASED) {
+        trace_injector = &global_trace_injector;
+        std::vector<FirstInMsg> first_in_msgs = trace_injector->getFirstInMsgs(local_id);
+        // Iterate through the first_in_msgs and convert it to packets and inject the packets to the packets queue
+        for (size_t i = 0; i < first_in_msgs.size(); i++) {
+            FuturePacket future_packet;
+            int vc = randInt(0,GlobalParams::n_virtual_channels-1);
+            future_packet.packet.make(first_in_msgs[i].in_msg.src, first_in_msgs[i].in_msg.dest, vc, -1, 5); //TODO: get the size from the trace file
+            future_packet.packet.trace_id = first_in_msgs[i].trace_id;
+            future_packet.packet.addr = first_in_msgs[i].in_msg.addr;
+            if (first_in_msgs[i].in_msg.type == "EXCLSUIVE_UNBLOCK") {
+                future_packet.packet.payload_type = EXCLUSIVE_UNBLOCK;
+            } else {
+                future_packet.packet.payload_type = OTHER;
+            }
+            future_packet.injection_cycle = GlobalParams::reset_time;
+            future_packets.push(future_packet);
+        }
     }
 }
 
@@ -172,7 +173,7 @@ bool ProcessingElement::canShot(Packet & packet)
 
     double now = sc_time_stamp().to_double() / GlobalParams::clock_period_ps;
 
-    if (GlobalParams::traffic_distribution != TRAFFIC_TABLE_BASED || GlobalParams::traffic_distribution != TRAFFIC_TRACE_BASED) {
+    if (GlobalParams::traffic_distribution != TRAFFIC_TABLE_BASED && GlobalParams::traffic_distribution != TRAFFIC_TRACE_BASED) {
 	if (!transmittedAtPreviousCycle)
 	    threshold = GlobalParams::packet_injection_rate;
 	else
@@ -201,7 +202,7 @@ bool ProcessingElement::canShot(Packet & packet)
             exit(-1);
         }
 	}
-    } else if (GlobalParams::traffic_distribution != TRAFFIC_TABLE_BASED) {			// Table based communication traffic
+    } else if (GlobalParams::traffic_distribution == TRAFFIC_TABLE_BASED) {			// Table based communication traffic
 	if (never_transmit)
 	    return false;
 
