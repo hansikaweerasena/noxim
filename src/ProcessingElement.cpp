@@ -135,6 +135,7 @@ Flit ProcessingElement::nextFlit()
 
     flit.payload_type = packet.payload_type;
     flit.addr = packet.addr;
+    flit.trace_id = packet.trace_id;
 
     flit.hub_relay_node = NOT_VALID;
 

@@ -53,6 +53,42 @@ static onullstream LOG;
 
 #endif
 
+// For TRACE mode, you need to set the TRACE flag in the Makefile (Uncomment -g -DTRACE)
+#ifdef TRACE
+
+#define TRACEO (std::cout << std::setw(7) << left << sc_time_stamp().to_double() / GlobalParams::clock_period_ps << " " << name() << "::" << __func__<< "() --> ")
+
+#else
+template <class cT, class traits = std::char_traits<cT> >
+class basic_nullbuf: public std::basic_streambuf<cT, traits> {
+    typename traits::int_type overflow(typename traits::int_type c)
+    {
+        return traits::not_eof(c); // indicate success
+    }
+};
+
+template <class cT, class traits = std::char_traits<cT> >
+class basic_onullstream: public std::basic_ostream<cT, traits> {
+public:
+    basic_onullstream():
+    std::basic_ios<cT, traits>(&m_sbuf),
+    std::basic_ostream<cT, traits>(&m_sbuf)
+    {
+        // note: the original code is missing the required this->
+        this->init(&m_sbuf);
+    }
+
+private:
+    basic_nullbuf<cT, traits> m_sbuf;
+};
+
+typedef basic_onullstream<char> onullstream;
+typedef basic_onullstream<wchar_t> wonullstream;
+
+static onullstream TRACEO;
+
+#endif
+
 // Output overloading
 
 inline ostream & operator <<(ostream & os, const Flit & flit)

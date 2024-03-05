@@ -14,6 +14,7 @@ void Target::b_transport( tlm::tlm_generic_payload& trans, sc_time& delay )
 {
     struct Flit* my_flit = (struct Flit*)trans.get_data_ptr();
 
+    TRACEO << "*** [Ch" <<local_id << "] Received: " << *my_flit << endl;
     LOG << "*** [Ch" <<local_id << "] Received: " << *my_flit << endl;
 
     // only moves received flit to the antenna buffer
