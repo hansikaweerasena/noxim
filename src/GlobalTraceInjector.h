@@ -17,7 +17,7 @@ using namespace std;
 struct Message {
     int src;
     int dest;
-    string size;
+    int size;
     int addr;
     string type;
     bool valid; // Flag to indicate if the message is valid

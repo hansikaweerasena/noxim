@@ -63,7 +63,7 @@ Message GlobalTraceInjector::parseMessage(const std::string& msgPart) {
 
             if (key == "src") msg.src = stoi(value);
             else if (key == "dest") msg.dest = stoi(value);
-            else if (key == "size") msg.size = value;
+            else if (key == "size") msg.size = stoi(value);
             else if (key == "addr") msg.addr = stoi(value);
             else if (key == "type") msg.type = value;
         }

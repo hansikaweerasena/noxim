@@ -43,7 +43,7 @@ void ProcessingElement::initTraceInjector(GlobalTraceInjector& global_trace_inje
         for (size_t i = 0; i < first_in_msgs.size(); i++) {
             FuturePacket future_packet;
             int vc = randInt(0,GlobalParams::n_virtual_channels-1);
-            future_packet.packet.make(first_in_msgs[i].in_msg.src, first_in_msgs[i].in_msg.dest, vc, -1, 5); //TODO: get the size from the trace file
+            future_packet.packet.make(first_in_msgs[i].in_msg.src, first_in_msgs[i].in_msg.dest, vc, -1, first_in_msgs[i].in_msg.size);
             future_packet.packet.trace_id = first_in_msgs[i].trace_id;
             future_packet.packet.addr = first_in_msgs[i].in_msg.addr;
             if (first_in_msgs[i].in_msg.type == "EXCLUSIVE_UNBLOCK") {
@@ -64,7 +64,7 @@ void ProcessingElement::injectFuturePackets(const Flit & out_flit){
             Record nextRecord = trace_injector->getNextRecord(out_flit.trace_id, out_flit.src_id, out_flit.dst_id, out_flit.addr);
             FuturePacket future_packet;
             int vc = randInt(0,GlobalParams::n_virtual_channels-1);
-            future_packet.packet.make(nextRecord.in_msg.src, nextRecord.in_msg.dest, vc, -1, 5); //TODO: get the size from the trace file
+            future_packet.packet.make(nextRecord.in_msg.src, nextRecord.in_msg.dest, vc, -1, nextRecord.in_msg.size);
             future_packet.packet.trace_id = out_flit.trace_id;
             future_packet.packet.addr = nextRecord.in_msg.addr;
             if (nextRecord.in_msg.type == "EXCLUSIVE_UNBLOCK") {
