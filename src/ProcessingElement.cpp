@@ -46,7 +46,7 @@ void ProcessingElement::initTraceInjector(GlobalTraceInjector& global_trace_inje
             future_packet.packet.make(first_in_msgs[i].in_msg.src, first_in_msgs[i].in_msg.dest, vc, -1, 5); //TODO: get the size from the trace file
             future_packet.packet.trace_id = first_in_msgs[i].trace_id;
             future_packet.packet.addr = first_in_msgs[i].in_msg.addr;
-            if (first_in_msgs[i].in_msg.type == "EXCLSUIVE_UNBLOCK") {
+            if (first_in_msgs[i].in_msg.type == "EXCLUSIVE_UNBLOCK") {
                 future_packet.packet.payload_type = EXCLUSIVE_UNBLOCK;
             } else {
                 future_packet.packet.payload_type = OTHER;
@@ -59,34 +59,36 @@ void ProcessingElement::initTraceInjector(GlobalTraceInjector& global_trace_inje
 
 // Inject future packets to the future_packets queue based on the out tail flit
 void ProcessingElement::injectFuturePackets(const Flit & out_flit){
-    try {
-        Record nextRecord = trace_injector->getNextRecord(out_flit.trace_id, out_flit.src_id, out_flit.dst_id, out_flit.addr);
-        FuturePacket future_packet;
-        int vc = randInt(0,GlobalParams::n_virtual_channels-1);
-        future_packet.packet.make(nextRecord.in_msg.src, nextRecord.in_msg.dest, vc, -1, 5); //TODO: get the size from the trace file
-        future_packet.packet.trace_id = out_flit.trace_id;
-        future_packet.packet.addr = nextRecord.in_msg.addr;
-        if (nextRecord.in_msg.type == "EXCLSUIVE_UNBLOCK") {
-            future_packet.packet.payload_type = EXCLUSIVE_UNBLOCK;
-        } else {
-            future_packet.packet.payload_type = OTHER;
-        }
-        double now = sc_time_stamp().to_double() / GlobalParams::clock_period_ps;
-        future_packet.injection_cycle = now + nextRecord.delay;
-        future_packets.push(future_packet);
-        // If in packet is EXCLUSIVE_UNBLOCK, then we need to inject the next packet in the same cycle
-        if (nextRecord.in_msg.type == "EXCLSUIVE_UNBLOCK") {
-            injectFuturePackets(out_flit);
-        } 
-
-        } catch (const std::runtime_error& e) {
-            std::string errorMessage = e.what();
-            if (errorMessage == "Queue is empty.") {
-                LOG << "Queue" << out_flit.trace_id << "is empty." << std::endl;
+    if (out_flit.payload_type != EXCLUSIVE_UNBLOCK) {
+        try {
+            Record nextRecord = trace_injector->getNextRecord(out_flit.trace_id, out_flit.src_id, out_flit.dst_id, out_flit.addr);
+            FuturePacket future_packet;
+            int vc = randInt(0,GlobalParams::n_virtual_channels-1);
+            future_packet.packet.make(nextRecord.in_msg.src, nextRecord.in_msg.dest, vc, -1, 5); //TODO: get the size from the trace file
+            future_packet.packet.trace_id = out_flit.trace_id;
+            future_packet.packet.addr = nextRecord.in_msg.addr;
+            if (nextRecord.in_msg.type == "EXCLUSIVE_UNBLOCK") {
+                future_packet.packet.payload_type = EXCLUSIVE_UNBLOCK;
             } else {
-                std::cerr << "Error: " << e.what() << std::endl;
+                future_packet.packet.payload_type = OTHER;
             }
-        }
+            double now = sc_time_stamp().to_double() / GlobalParams::clock_period_ps;
+            future_packet.injection_cycle = now + nextRecord.delay;
+            future_packets.push(future_packet);
+            // If in packet is EXCLUSIVE_UNBLOCK, then we need to inject the next packet in the same cycle
+            if (nextRecord.in_msg.type == "EXCLUSIVE_UNBLOCK") {
+                injectFuturePackets(out_flit);
+            } 
+
+            } catch (const std::runtime_error& e) {
+                std::string errorMessage = e.what();
+                if (errorMessage == "Queue is empty.") {
+                    LOG << "Queue" << out_flit.trace_id << "is empty." << std::endl;
+                } else {
+                    throw e;
+                }
+            }
+    }
 }
 
 
@@ -130,6 +132,9 @@ Flit ProcessingElement::nextFlit()
     flit.sequence_length = packet.size;
     flit.hop_no = 0;
     //  flit.payload     = DEFAULT_PAYLOAD;
+
+    flit.payload_type = packet.payload_type;
+    flit.addr = packet.addr;
 
     flit.hub_relay_node = NOT_VALID;
 
