@@ -164,4 +164,5 @@ traffic_distribution: TRAFFIC_TRACE_BASED
 # when traffic table based is specified, use the following
 # configuration file
 traffic_table_filename: "t.txt"
+# trace files should have fixed names data0.txt, data1.txt and so on ..
 traffic_no_trace_files: 1
