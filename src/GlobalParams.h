@@ -162,6 +162,7 @@ struct GlobalParams {
     static string traffic_distribution;
     static string traffic_table_filename;
     static int traffic_no_trace_files;
+    static int traffic_trace_node_offset;
     static string config_filename;
     static string power_config_filename;
     static int clock_period_ps;

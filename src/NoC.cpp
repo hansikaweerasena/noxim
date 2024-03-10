@@ -122,8 +122,7 @@ void NoC::buildCommon()
 	
 	// Check for trace file availability
 	if (GlobalParams::traffic_distribution == TRAFFIC_TRACE_BASED)
-		assert(gtinjector.load(GlobalParams::traffic_no_trace_files));
-
+        assert(gtinjector.load(GlobalParams::traffic_no_trace_files, GlobalParams::traffic_trace_node_offset));
 	// Var to track Hub connected ports
 	hub_connected_ports = (int *) calloc(GlobalParams::hub_configuration.size(), sizeof(int));
 

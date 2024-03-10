@@ -41,7 +41,7 @@ class GlobalTraceInjector {
     GlobalTraceInjector();
 
     // Load traffic table from file. Returns true if ok, false otherwise
-    bool load(const int no_of_traces);
+    bool load(const int no_of_traces, const int node_offset);
 
     // Returns the record with next in message to network depend on the out message
     Record getNextRecord(const int trace_id,
@@ -54,9 +54,9 @@ class GlobalTraceInjector {
 
   private:
 
-    Message parseMessage(const std::string& msgPart);
+    Message parseMessage(const std::string& msgPart, const int node_offset);
 
-    std::queue<Record> readData(const string& filename);
+    std::queue<Record> readData(const string& filename, const int node_offset);
 
     std::vector<std::queue<Record>> traces;
 };

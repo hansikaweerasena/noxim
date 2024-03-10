@@ -12,7 +12,7 @@ GlobalTraceInjector::GlobalTraceInjector()
 }
 
 // Load traffic table from file. Returns true if ok, false otherwise
-bool GlobalTraceInjector::load(const int no_of_traces)
+bool GlobalTraceInjector::load(const int no_of_traces, const int node_offset)
 {
     vector<string> filenames;
 
@@ -26,7 +26,7 @@ bool GlobalTraceInjector::load(const int no_of_traces)
     // Load each file into a separate queue
     for (const auto& filename : filenames) {
         try {
-            auto recordsQueue = readData(filename);
+            auto recordsQueue = readData(filename, node_offset);
             traces.push_back(std::move(recordsQueue));
         } catch (const std::runtime_error& e) {
             cerr << "Error processing " << filename << ": " << e.what() << endl;
@@ -39,7 +39,7 @@ bool GlobalTraceInjector::load(const int no_of_traces)
 
 
 // Parse a message from a string
-Message GlobalTraceInjector::parseMessage(const std::string& msgPart) {
+Message GlobalTraceInjector::parseMessage(const std::string& msgPart, const int node_offset) {
     Message msg;
     msg.valid = false; // Default to false
 
@@ -61,11 +61,18 @@ Message GlobalTraceInjector::parseMessage(const std::string& msgPart) {
             getline(getline(tokenStream, key, '='), value);
             key.erase(remove_if(key.begin(), key.end(), ::isspace), key.end());
 
-            if (key == "src") msg.src = stoi(value);
-            else if (key == "dest") msg.dest = stoi(value);
-            else if (key == "size") msg.size = stoi(value);
-            else if (key == "addr") msg.addr = stoi(value);
-            else if (key == "type") msg.type = value;
+            if (key == "src") {
+                msg.src = (stoi(value) + node_offset)%64; //TODO : for now it's fixed 64 nodes
+            }
+            else if (key == "dest") {
+                msg.dest = (stoi(value) + node_offset)%64;
+            }
+            else if (key == "size")
+                msg.size = stoi(value);
+            else if (key == "addr")
+                msg.addr = stoi(value);
+            else if (key == "type")
+                msg.type = value;
         }
 
         msg.valid = true;
@@ -75,7 +82,7 @@ Message GlobalTraceInjector::parseMessage(const std::string& msgPart) {
 }
 
 
-std::queue<Record> GlobalTraceInjector::readData(const string& filename) {
+std::queue<Record> GlobalTraceInjector::readData(const string& filename, const int node_offset) {
     ifstream file(filename);
     if (!file.is_open()) {
         throw runtime_error("File not found: " + filename);
@@ -93,8 +100,8 @@ std::queue<Record> GlobalTraceInjector::readData(const string& filename) {
         getline(ss, inMsgPart, ':');
         getline(ss, delayPart);
 
-        record.out_msg = parseMessage(outMsgPart);
-        record.in_msg = parseMessage(inMsgPart);
+        record.out_msg = parseMessage(outMsgPart, node_offset);
+        record.in_msg = parseMessage(inMsgPart, node_offset);
         record.delay = stoi(delayPart.substr(delayPart.find("=") + 1));
 
         records.push(record);

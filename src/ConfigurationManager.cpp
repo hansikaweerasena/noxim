@@ -79,6 +79,7 @@ void loadConfiguration() {
     GlobalParams::traffic_distribution = readParam<string>(config, "traffic_distribution");
     GlobalParams::traffic_table_filename = readParam<string>(config, "traffic_table_filename");
     GlobalParams::traffic_no_trace_files = readParam<int>(config, "traffic_no_trace_files");
+    GlobalParams::traffic_trace_node_offset = readParam<int>(config, "traffic_trace_node_offset");
     GlobalParams::clock_period_ps = readParam<int>(config, "clock_period_ps");
     GlobalParams::simulation_time = readParam<int>(config, "simulation_time");
     GlobalParams::n_virtual_channels = readParam<int>(config, "n_virtual_channels");
@@ -577,8 +578,9 @@ void parseCmdLine(int arg_num, char *arg_vet[])
         }else if (!strcmp(traffic, "trace")) {
             GlobalParams::traffic_distribution = 
             TRAFFIC_TRACE_BASED;
-            GlobalParams::traffic_no_trace_files = atoi(arg_vet[++i]); 
-		} else if (!strcmp(traffic, "local")) {
+            GlobalParams::traffic_no_trace_files = atoi(arg_vet[++i]);
+            GlobalParams::traffic_trace_node_offset = atoi(arg_vet[++i]);
+        } else if (!strcmp(traffic, "local")) {
 		    GlobalParams::traffic_distribution = TRAFFIC_LOCAL;
 		    GlobalParams::locality=atof(arg_vet[++i]);
 		}
