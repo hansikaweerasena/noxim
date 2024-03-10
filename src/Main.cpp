@@ -107,8 +107,23 @@ int sc_main(int arg_num, char *arg_vet[])
     cout << " Now running for " << GlobalParams:: simulation_time << " cycles..." << endl;
     // fix clock periods different from 1ns
     //sc_start(GlobalParams::simulation_time, SC_NS);
-    sc_start(GlobalParams::simulation_time * GlobalParams::clock_period_ps, SC_PS);
 
+    // Variables to track the simulation progress
+    int total_simulation_time = GlobalParams::simulation_time; // Total desired simulation time in cycles
+    int clock_period_ps = GlobalParams::clock_period_ps; // Clock period in picoseconds
+    int safe_duration_cycles = 1000000; // Determine a safe duration based on your system's limits (This rough safe duration for 500 clock period)
+
+    // Run the simulation in phases to avoid overflow
+    while (total_simulation_time > 0) {
+        // Determine the duration of the current phase in cycles
+        double current_phase_cycles = std::min(safe_duration_cycles, total_simulation_time);
+
+        // Start the simulation for this phase, converting cycle count to time in picoseconds
+        sc_start(current_phase_cycles * clock_period_ps, SC_PS);
+
+        // Subtract the current phase duration from the total simulation time remaining
+        total_simulation_time -= current_phase_cycles;
+    }
 
     // Close the simulation
     if (GlobalParams::trace_mode) sc_close_vcd_trace_file(tf);
