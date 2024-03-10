@@ -56,7 +56,7 @@ static onullstream LOG;
 // For TRACE mode, you need to set the TRACE flag in the Makefile (Uncomment -g -DTRACE)
 #ifdef TRACE
 
-#define TRACEO (std::cout << std::setw(7) << left << sc_time_stamp().to_double() / GlobalParams::clock_period_ps << " " << name() << "::" << __func__<< "() --> ")
+#define TRACEO (std::cout << std::fixed << std::setprecision(0) << std::setw(10) << std::left << sc_time_stamp().to_double() / GlobalParams::clock_period_ps << " " << name() << "::" << __func__<< "() --> ")
 
 #else
 template <class cT, class traits = std::char_traits<cT> >
