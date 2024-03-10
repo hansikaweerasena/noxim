@@ -13,8 +13,8 @@
 #   BUTTERFLY, BASELINE, and OMEGA are Delta Network topologies
 # topology: MESH
 # X and Y mesh sizes
-mesh_dim_x: 2
-mesh_dim_y: 2
+mesh_dim_x: 8
+mesh_dim_y: 8
 # number of flits for each router buffer
 buffer_depth: 4
 # size of flits, in bits
@@ -77,16 +77,133 @@ Hubs:
 
     0:
       attached_nodes: [0]
-
     1:
       attached_nodes: [1]
-
     2:
       attached_nodes: [2]
-
     3:
       attached_nodes: [3]
-
+    4:
+      attached_nodes: [4]
+    5:
+      attached_nodes: [5]
+    6:
+      attached_nodes: [6]
+    7:
+      attached_nodes: [7]
+    8:
+      attached_nodes: [8]
+    9:
+      attached_nodes: [9]
+    10:
+      attached_nodes: [10]
+    11:
+      attached_nodes: [11]
+    12:
+      attached_nodes: [12]
+    13:
+      attached_nodes: [13]
+    14:
+      attached_nodes: [14]
+    15:
+      attached_nodes: [15]
+    16:
+      attached_nodes: [16]
+    17:
+      attached_nodes: [17]
+    18:
+      attached_nodes: [18]
+    19: 
+      attached_nodes: [19]
+    20: 
+      attached_nodes: [20]
+    21: 
+      attached_nodes: [21]
+    22: 
+      attached_nodes: [22]
+    23: 
+      attached_nodes: [23]
+    24: 
+      attached_nodes: [24]
+    25: 
+      attached_nodes: [25]
+    26: 
+      attached_nodes: [26]
+    27: 
+      attached_nodes: [27]
+    28: 
+      attached_nodes: [28]
+    29: 
+      attached_nodes: [29]
+    30: 
+      attached_nodes: [30]
+    31: 
+      attached_nodes: [31]
+    32: 
+      attached_nodes: [32]
+    33: 
+      attached_nodes: [33]
+    34: 
+      attached_nodes: [34]
+    35: 
+      attached_nodes: [35]
+    36: 
+      attached_nodes: [36]
+    37: 
+      attached_nodes: [37]
+    38: 
+      attached_nodes: [38]
+    39: 
+      attached_nodes: [39]
+    40: 
+      attached_nodes: [40]
+    41: 
+      attached_nodes: [41]
+    42: 
+      attached_nodes: [42]
+    43: 
+      attached_nodes: [43]
+    44: 
+      attached_nodes: [44]
+    45: 
+      attached_nodes: [45]
+    46: 
+      attached_nodes: [46]
+    47: 
+      attached_nodes: [47]
+    48: 
+      attached_nodes: [48]
+    49:     
+      attached_nodes: [49]
+    50: 
+      attached_nodes: [50]
+    51: 
+      attached_nodes: [51]
+    52: 
+      attached_nodes: [52]
+    53: 
+      attached_nodes: [53]
+    54: 
+      attached_nodes: [54]
+    55: 
+      attached_nodes: [55]
+    56: 
+      attached_nodes: [56]
+    57: 
+      attached_nodes: [57]
+    58: 
+      attached_nodes: [58]
+    59: 
+      attached_nodes: [59]
+    60: 
+      attached_nodes: [60]
+    61: 
+      attached_nodes: [61]
+    62: 
+      attached_nodes: [62]
+    63: 
+      attached_nodes: [63]
+    
 # Transmission channels configuration
 # each channel modelizes the transmission over a given frequency that
 # can be used by a set of communicating hubs
@@ -115,11 +232,12 @@ RadioChannels:
 
 # SIMULATION PARAMETERS
 #
-clock_period_ps: 1000
+clock_period_ps: 500
 # duration of reset signal assertion, expressed in cycles
 reset_time: 1000
 # overal simulation lenght, expressed in cycles
-simulation_time: 150000
+simulation_time: 10000000
+#10801242 29493122
 # collect stats after a given number of cycles
 stats_warm_up_time: 100
 # power breakdown, nodes communication details
