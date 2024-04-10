@@ -87,37 +87,37 @@ Hubs:
 #  48 49| 50 51| 52 53| 54 55
 #  56 57| 58 59| 60 61| 62 63
 
-    Hub 0:
+    0:
       attached_nodes: [ 0, 1, 8, 9 ]
-    Hub 1:
+    1:
       attached_nodes: [ 2, 3, 10, 11 ]
-    Hub 2:
+    2:
       attached_nodes: [ 4, 5, 12, 13 ]
-    Hub 3:
+    3:
       attached_nodes: [ 6, 7, 14, 15 ]
-    Hub 4:
+    4:
       attached_nodes: [ 16, 17, 24, 25 ]
-    Hub 5:
+    5:
       attached_nodes: [ 18, 19, 26, 27 ]
-    Hub 6:
+    6:
       attached_nodes: [ 20, 21, 28, 29 ]
-    Hub 7:
+    7:
       attached_nodes: [ 22, 23, 30, 31 ]
-    Hub 8:
+    8:
       attached_nodes: [ 32, 33, 40, 41 ]
-    Hub 9:
+    9:
       attached_nodes: [ 34, 35, 42, 43 ]
-    Hub 10:
+    10:
       attached_nodes: [ 36, 37, 44, 45 ]
-    Hub 11:
+    11:
       attached_nodes: [ 38, 39, 46, 47 ]
-    Hub 12:
+    12:
       attached_nodes: [ 48, 49, 56, 57 ]
-    Hub 13:
+    13:
       attached_nodes: [ 50, 51, 58, 59 ]
-    Hub 14:
+    14:
       attached_nodes: [ 52, 53, 60, 61 ]
-    Hub 15:
+    15:
       attached_nodes: [ 54, 55, 62, 63 ]
 
 # Transmission channels configuration
