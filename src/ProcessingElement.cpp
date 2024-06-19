@@ -209,25 +209,25 @@ bool ProcessingElement::canShot(Packet & packet)
         }
 	}
     } else if (GlobalParams::traffic_distribution == TRAFFIC_TABLE_BASED) {			// Table based communication traffic
-	if (never_transmit)
-	    return false;
+        if (never_transmit)
+            return false;
 
-	bool use_pir = (transmittedAtPreviousCycle == false);
-	vector < pair < int, double > > dst_prob;
-	double threshold =
-	    traffic_table->getCumulativePirPor(local_id, (int) now, use_pir, dst_prob);
+        bool use_pir = (transmittedAtPreviousCycle == false);
+        vector < pair < int, double > > dst_prob;
+        double threshold =
+            traffic_table->getCumulativePirPor(local_id, (int) now, use_pir, dst_prob);
 
-	double prob = (double) rand() / RAND_MAX;
-	shot = (prob < threshold);
-	if (shot) {
-	    for (unsigned int i = 0; i < dst_prob.size(); i++) {
-		if (prob < dst_prob[i].second) {
-                    int vc = randInt(0,GlobalParams::n_virtual_channels-1);
-		    packet.make(local_id, dst_prob[i].first, vc, now, getRandomSize());
-		    break;
-		}
-	    }
-	}
+        double prob = (double) rand() / RAND_MAX;
+        shot = (prob < threshold);
+        if (shot) {
+            for (unsigned int i = 0; i < dst_prob.size(); i++) {
+            if (prob < dst_prob[i].second) {
+                        int vc = randInt(0,GlobalParams::n_virtual_channels-1);
+                packet.make(local_id, dst_prob[i].first, vc, now, getRandomSize());
+                break;
+            }
+            }
+        }
     } else{ //Trace based communication traffic
         if(!future_packets.empty()){
             FuturePacket future_packet = future_packets.front();
