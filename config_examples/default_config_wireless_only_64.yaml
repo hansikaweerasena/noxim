@@ -236,8 +236,9 @@ clock_period_ps: 500
 # duration of reset signal assertion, expressed in cycles
 reset_time: 1000
 # overal simulation lenght, expressed in cycles
+simulation_time: 50000
 #simulation_time: 500000
-simulation_time: 5000000
+#simulation_time: 5000000
 #10801242 29493122
 # collect stats after a given number of cycles
 stats_warm_up_time: 100
@@ -279,11 +280,17 @@ probability_of_retransmission: 0.01
 #   TRAFFIC_BIT_REVERSAL
 #   TRAFFIC_SHUFFLE
 #   TRAFFIC_BUTTERFLY
-traffic_distribution: TRAFFIC_TRACE_BASED
+#   TRAFFIC_HYBRID_TAB_TRA
+traffic_distribution: TRAFFIC_HYBRID_TAB_TRA
 # when traffic table based is specified, use the following
 # configuration file
 traffic_table_filename: "t.txt"
 # trace files should have fixed names data0.txt, data1.txt and so on ..
 traffic_no_trace_files: 1
 # offset for changing the node IDs
-traffic_trace_node_offset: 60
+traffic_trace_node_offset: 0
+
+
+#  -config
+#  ../config_examples/default_config_wireless_only_64.yaml
+#  -traffic trace 1 0

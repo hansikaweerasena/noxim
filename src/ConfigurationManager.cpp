@@ -580,6 +580,11 @@ void parseCmdLine(int arg_num, char *arg_vet[])
             TRAFFIC_TRACE_BASED;
             GlobalParams::traffic_no_trace_files = atoi(arg_vet[++i]);
             GlobalParams::traffic_trace_node_offset = atoi(arg_vet[++i]);
+        }else if (!strcmp(traffic, "hybrid")) {
+            GlobalParams::traffic_distribution = TRAFFIC_HYBRID_TAB_TRA;
+            GlobalParams::traffic_table_filename = arg_vet[++i];
+            GlobalParams::traffic_no_trace_files = atoi(arg_vet[++i]);
+            GlobalParams::traffic_trace_node_offset = atoi(arg_vet[++i]);
         } else if (!strcmp(traffic, "local")) {
 		    GlobalParams::traffic_distribution = TRAFFIC_LOCAL;
 		    GlobalParams::locality=atof(arg_vet[++i]);

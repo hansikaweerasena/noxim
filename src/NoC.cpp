@@ -123,6 +123,11 @@ void NoC::buildCommon()
 	// Check for trace file availability
 	if (GlobalParams::traffic_distribution == TRAFFIC_TRACE_BASED)
         assert(gtinjector.load(GlobalParams::traffic_no_trace_files, GlobalParams::traffic_trace_node_offset));
+
+    // Check for traffic table availability
+    if (GlobalParams::traffic_distribution == TRAFFIC_HYBRID_TAB_TRA)
+        assert(gttable.load(GlobalParams::traffic_table_filename.c_str()));
+        assert(gtinjector.load(GlobalParams::traffic_no_trace_files, GlobalParams::traffic_trace_node_offset));
 	// Var to track Hub connected ports
 	hub_connected_ports = (int *) calloc(GlobalParams::hub_configuration.size(), sizeof(int));
 
@@ -547,7 +552,17 @@ void NoC::buildButterfly()
 		if (GlobalParams::traffic_distribution == TRAFFIC_TRACE_BASED)
 		{
 			core[i]->pe->initTraceInjector(gtinjector);	// Needed to inject traces
-		}		
+		}
+
+        if (GlobalParams::traffic_distribution == TRAFFIC_HYBRID_TAB_TRA)
+        {
+            core[i]->pe->traffic_table = &gttable;	// Needed to choose destination
+            core[i]->pe->never_transmit = (gttable.occurrencesAsSource(core[i]->pe->local_id) == 0);
+
+            core[i]->pe->initTraceInjector(gtinjector);	// Needed to inject traces
+        }
+        else
+            core[i]->pe->never_transmit = false;
 
 		// Map clock and reset
 		core[i]->clock(clock);
@@ -1314,10 +1329,20 @@ void NoC::buildBaseline()
 	    core[i]->pe->never_transmit = false;
 
 	// check for trace injector availability
-	if (GlobalParams::traffic_distribution == TRAFFIC_TABLE_BASED)
+	if (GlobalParams::traffic_distribution == TRAFFIC_TRACE_BASED)
 	{
 	    core[i]->pe->initTraceInjector(gtinjector);	// Needed to inject traces
 	}
+
+    if (GlobalParams::traffic_distribution == TRAFFIC_HYBRID_TAB_TRA)
+    {
+        core[i]->pe->traffic_table = &gttable;	// Needed to choose destination
+        core[i]->pe->never_transmit = (gttable.occurrencesAsSource(core[i]->pe->local_id) == 0);
+
+        core[i]->pe->initTraceInjector(gtinjector);	// Needed to inject traces
+    }
+    else
+        core[i]->pe->never_transmit = false;
 
 	// Map clock and reset
 	core[i]->clock(clock);
@@ -1955,7 +1980,16 @@ void NoC::buildOmega()
 		{
 			core[i]->pe->initTraceInjector(gtinjector);	// Needed to inject traces
 		}
-		
+
+        if (GlobalParams::traffic_distribution == TRAFFIC_HYBRID_TAB_TRA)
+        {
+            core[i]->pe->traffic_table = &gttable;	// Needed to choose destination
+            core[i]->pe->never_transmit = (gttable.occurrencesAsSource(core[i]->pe->local_id) == 0);
+
+            core[i]->pe->initTraceInjector(gtinjector);	// Needed to inject traces
+        }
+        else
+            core[i]->pe->never_transmit = false;
 
 		// Map clock and reset
 		core[i]->clock(clock);
@@ -2240,6 +2274,17 @@ void NoC::buildMesh()
 		{
 			t[i][j]->pe->initTraceInjector(gtinjector);	// Needed to inject traces
 		}
+
+
+        if (GlobalParams::traffic_distribution == TRAFFIC_HYBRID_TAB_TRA)
+        {
+            t[i][j]->pe->traffic_table = &gttable;	// Needed to choose destination
+            t[i][j]->pe->never_transmit = (gttable.occurrencesAsSource(t[i][j]->pe->local_id) == 0);
+
+            t[i][j]->pe->initTraceInjector(gtinjector);	// Needed to inject traces
+        }
+        else
+            t[i][j]->pe->never_transmit = false;
 
 	    // Map clock and reset
 	    t[i][j]->clock(clock);
