@@ -20,6 +20,13 @@ To receive information about new Noxim features, updates and events, please regi
 
 What's New ? 
 ------------
+**[March 2024]**
+
+* Support for trace based traffic injection
+* Support for injecting multiple traces
+* New yaml examples with trace based injection
+* Hybrid of trace based and table based traffic injection 
+
 **[March 2018]**
 
   * Support for virtual channels for improved traffic management
