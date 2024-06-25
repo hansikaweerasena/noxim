@@ -26,7 +26,7 @@ void TokenRing::updateTokenPacket(int channel)
 
 	    int new_token_holder = rings_mapping[channel][token_position[channel]];
         LOG << "*** Token of channel " << channel << " has been assigned to Hub_" <<  new_token_holder << endl;
-        TRACEO << "*** Token of channel " << channel << " has been assigned to Hub_" <<  new_token_holder << endl;
+//        TRACEO << "*** Token of channel " << channel << " has been assigned to Hub_" <<  new_token_holder << endl;
 	    current_token_holder[channel]->write(new_token_holder);
 	    // TEST HOLD BUG
 	    //flag[channel][token_position[channel]]->write(HOLD_CHANNEL);
