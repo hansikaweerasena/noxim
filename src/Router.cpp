@@ -60,6 +60,8 @@ void Router::rxProcess()
 		    buffer[i][vc].Push(received_flit);
 		    LOG << " Flit " << received_flit << " collected from Input[" << i << "][" << vc <<"]" << endl;
 
+            TRACEO << "Incoming Flit -> R_id: " << local_id << " , in_port: " << i << ", in_vc: " << vc << endl;
+
 		    power.bufferRouterPush();
 
 		    // Negate the old value for Alternating Bit Protocol (ABP)
@@ -206,6 +208,8 @@ void Router::txProcess()
 		  {
 		      //if (GlobalParams::verbose_mode > VERBOSE_OFF) 
 		      LOG << "Input[" << i << "][" << vc << "] forwarded to Output[" << o << "], flit: " << flit << endl;
+
+              TRACEO << "Outgoing Flit -> R_id: " << local_id << " , in_port: " << i << ", out_port: " << o << endl;
 
 		      flit_tx[o].write(flit);
 		      current_level_tx[o] = 1 - current_level_tx[o];
