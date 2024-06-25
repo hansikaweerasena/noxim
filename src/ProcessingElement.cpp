@@ -24,9 +24,11 @@ void ProcessingElement::rxProcess()
     } else {
 	if (req_rx.read() == 1 - current_level_rx) {
 	    Flit flit_tmp = flit_rx.read();
-        if (GlobalParams::traffic_distribution == TRAFFIC_TRACE_BASED && flit_tmp.flit_type == FLIT_TYPE_TAIL) {
-            injectFuturePackets(flit_tmp);
-            LOG << "*** [des" << flit_tmp.dst_id << "] from " << flit_tmp.src_id << ", src" << flit_tmp<< endl;
+        if ((GlobalParams::traffic_distribution == TRAFFIC_TRACE_BASED || GlobalParams::traffic_distribution == TRAFFIC_HYBRID_TAB_TRA) && flit_tmp.flit_type == FLIT_TYPE_TAIL) {
+            if (flit_tmp.trace_id >= 0) {
+                injectFuturePackets(flit_tmp);
+                LOG << "*** [des" << flit_tmp.dst_id << "] from " << flit_tmp.src_id << ", src" << flit_tmp << endl;
+            }
         }
 	    current_level_rx = 1 - current_level_rx;	// Negate the old value for Alternating Bit Protocol (ABP)
 	}
@@ -36,7 +38,7 @@ void ProcessingElement::rxProcess()
 
 void ProcessingElement::initTraceInjector(GlobalTraceInjector& global_trace_injector)
 {
-    if (GlobalParams::traffic_distribution == TRAFFIC_TRACE_BASED) {
+    if (GlobalParams::traffic_distribution == TRAFFIC_TRACE_BASED || GlobalParams::traffic_distribution == TRAFFIC_HYBRID_TAB_TRA) {
         trace_injector = &global_trace_injector;
         std::vector<FirstInMsg> first_in_msgs = trace_injector->getFirstInMsgs(local_id);
         // Iterate through the first_in_msgs and convert it to packets and inject the packets to the packets queue
@@ -75,6 +77,8 @@ void ProcessingElement::injectFuturePackets(const Flit & out_flit){
             double now = sc_time_stamp().to_double() / GlobalParams::clock_period_ps;
             future_packet.injection_cycle = now + nextRecord.delay;
             future_packets.push(future_packet);
+
+            TRACEO << "*** future_packets added: " << endl;
             // If in packet is EXCLUSIVE_UNBLOCK, then we need to inject the next packet in the same cycle
             if (nextRecord.in_msg.type == "EXCLUSIVE_UNBLOCK") {
                 injectFuturePackets(out_flit);
@@ -156,7 +160,9 @@ Flit ProcessingElement::nextFlit()
 bool ProcessingElement::canShot(Packet & packet)
 {
    // assert(false);
-    if(never_transmit) return false;
+
+//    check for all nodes except for one in table (otherwise the trace ones are avoided)
+//    if(never_transmit) return false;
    
     //if(local_id!=16) return false;
     /* DEADLOCK TEST 
@@ -179,7 +185,7 @@ bool ProcessingElement::canShot(Packet & packet)
 
     double now = sc_time_stamp().to_double() / GlobalParams::clock_period_ps;
 
-    if (GlobalParams::traffic_distribution != TRAFFIC_TABLE_BASED && GlobalParams::traffic_distribution != TRAFFIC_TRACE_BASED) {
+    if (GlobalParams::traffic_distribution != TRAFFIC_TABLE_BASED && GlobalParams::traffic_distribution != TRAFFIC_TRACE_BASED && GlobalParams::traffic_distribution != TRAFFIC_HYBRID_TAB_TRA) {
 	if (!transmittedAtPreviousCycle)
 	    threshold = GlobalParams::packet_injection_rate;
 	else
@@ -224,11 +230,12 @@ bool ProcessingElement::canShot(Packet & packet)
             if (prob < dst_prob[i].second) {
                         int vc = randInt(0,GlobalParams::n_virtual_channels-1);
                 packet.make(local_id, dst_prob[i].first, vc, now, getRandomSize());
+                packet.trace_id = -1;
                 break;
             }
             }
         }
-    } else{ //Trace based communication traffic
+    } else if (GlobalParams::traffic_distribution == TRAFFIC_TRACE_BASED) {	 //Trace based communication traffic
         if(!future_packets.empty()){
             FuturePacket future_packet = future_packets.front();
             if (future_packet.injection_cycle <= now) {
@@ -242,8 +249,44 @@ bool ProcessingElement::canShot(Packet & packet)
         }else{
             shot = false;
         }
-    }
+    } else {  // Hybrid (Table based + Trace based) communication traffic
+        if(!future_packets.empty()){
+            FuturePacket future_packet = future_packets.front();
+            if (future_packet.injection_cycle <= now) {
+                packet = future_packet.packet;
+                packet.timestamp = now;
+                future_packets.pop();
+                shot = true;
+            }else{
+                shot = false;
+            }
+        }else{
+            shot = false;
+        }
 
+        if (shot == false){
+            if (never_transmit)
+                return false;
+
+            bool use_pir = (transmittedAtPreviousCycle == false);
+            vector < pair < int, double > > dst_prob;
+            double threshold =
+                    traffic_table->getCumulativePirPor(local_id, (int) now, use_pir, dst_prob);
+
+            double prob = (double) rand() / RAND_MAX;
+            shot = (prob < threshold);
+            if (shot) {
+                for (unsigned int i = 0; i < dst_prob.size(); i++) {
+                    if (prob < dst_prob[i].second) {
+                        int vc = randInt(0,GlobalParams::n_virtual_channels-1);
+                        packet.make(local_id, dst_prob[i].first, vc, now, getRandomSize());
+                        packet.trace_id = -1;
+                        break;
+                    }
+                }
+            }
+        }
+    }
     return shot;
 }
 
