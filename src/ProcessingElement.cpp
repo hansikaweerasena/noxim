@@ -78,7 +78,6 @@ void ProcessingElement::injectFuturePackets(const Flit & out_flit){
             future_packet.injection_cycle = now + nextRecord.delay;
             future_packets.push(future_packet);
 
-            TRACEO << "*** future_packets added: " << endl;
             // If in packet is EXCLUSIVE_UNBLOCK, then we need to inject the next packet in the same cycle
             if (nextRecord.in_msg.type == "EXCLUSIVE_UNBLOCK") {
                 injectFuturePackets(out_flit);
