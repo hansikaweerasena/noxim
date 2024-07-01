@@ -278,7 +278,7 @@ bool ProcessingElement::canShot(Packet & packet)
                 for (unsigned int i = 0; i < dst_prob.size(); i++) {
                     if (prob < dst_prob[i].second) {
                         int vc = randInt(0,GlobalParams::n_virtual_channels-1);
-                        packet.make(local_id, dst_prob[i].first, vc, now, getRandomSize());
+                        packet.make(local_id, dst_prob[i].first, vc, now, 2);   // All the table based packet are control packet with size 2
                         packet.trace_id = -1;
                         break;
                     }
