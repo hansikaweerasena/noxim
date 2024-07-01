@@ -62,10 +62,10 @@ Message GlobalTraceInjector::parseMessage(const std::string& msgPart, const int 
             key.erase(remove_if(key.begin(), key.end(), ::isspace), key.end());
 
             if (key == "src") {
-                msg.src = (stoi(value) + node_offset)%64; //TODO : for now it's fixed 64 nodes
+                msg.src = (stoi(value))%64; //TODO : for now it's fixed 64 nodes
             }
             else if (key == "dest") {
-                msg.dest = (stoi(value) + node_offset)%64;
+                msg.dest = (stoi(value))%64;
             }
             else if (key == "size")
                 msg.size = stoi(value);
@@ -73,6 +73,16 @@ Message GlobalTraceInjector::parseMessage(const std::string& msgPart, const int 
                 msg.addr = stoi(value);
             else if (key == "type")
                 msg.type = value;
+            else if (key == "fixed")
+                msg.fixed = value;
+        }
+
+        if (msg.fixed != "src"){
+            msg.src = (msg.src + node_offset)%64;
+        }
+
+        if (msg.fixed != "des")  {
+            msg.dest = (msg.dest + node_offset)%64;
         }
 
         msg.valid = true;

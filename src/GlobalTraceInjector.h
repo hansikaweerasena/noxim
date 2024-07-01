@@ -21,6 +21,7 @@ struct Message {
     int addr;
     string type;
     bool valid; // Flag to indicate if the message is valid
+    string fixed;
 };
 
 struct Record {
