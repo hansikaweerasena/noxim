@@ -31,7 +31,7 @@ enum FlitType {
 
 // FlitDataType -- Flit data type enumeration
 enum PayloadType {
-    EXCLUSIVE_UNBLOCK, OTHER
+    EXCLUSIVE_UNBLOCK, OTHER, DOS
 };
 
 // Payload -- Payload definition

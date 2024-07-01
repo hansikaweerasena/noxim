@@ -28,6 +28,16 @@ void ProcessingElement::rxProcess()
             if (flit_tmp.trace_id >= 0) {
                 injectFuturePackets(flit_tmp);
                 LOG << "*** [des" << flit_tmp.dst_id << "] from " << flit_tmp.src_id << ", src" << flit_tmp << endl;
+            } else if (flit_tmp.payload_type == DOS) {
+                FuturePacket future_packet;
+                int vc = randInt(0,GlobalParams::n_virtual_channels-1);
+                future_packet.packet.make(flit_tmp.dst_id, flit_tmp.src_id, vc, -1, 5);
+                future_packet.packet.trace_id = -1;
+                future_packet.packet.addr = flit_tmp.addr;
+                future_packet.packet.payload_type = OTHER;
+                double now = sc_time_stamp().to_double() / GlobalParams::clock_period_ps;
+                future_packet.injection_cycle = now + 70;    // memory access time 70 cycles
+                future_packets.push(future_packet);
             }
         }
 	    current_level_rx = 1 - current_level_rx;	// Negate the old value for Alternating Bit Protocol (ABP)
@@ -280,6 +290,7 @@ bool ProcessingElement::canShot(Packet & packet)
                         int vc = randInt(0,GlobalParams::n_virtual_channels-1);
                         packet.make(local_id, dst_prob[i].first, vc, now, 2);   // All the table based packet are control packet with size 2
                         packet.trace_id = -1;
+                        packet.payload_type = DOS;
                         break;
                     }
                 }
