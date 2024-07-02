@@ -3,7 +3,7 @@
 # variable in exp : no of mal nodes, pir of mal node, no of apps running, dir nodes location(FIXED), simulation cycles, mal nodes mapping,  app nodes mapping
 
 #benchmarks=("FFT" "OCEAN" "RADIX" "FMM" "LU" "BARNES" "black")
-benchmarks=("FFT" "OCEAN" "FMM" "black")
+benchmarks=("RADIX" "LU" "BARNES")
 
 dir1=0
 dir2=7
