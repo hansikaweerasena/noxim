@@ -2,13 +2,15 @@
 
 # variable in exp : no of mal nodes, pir of mal node, no of apps running, dir nodes location(FIXED), simulation cycles, mal nodes mapping,  app nodes mapping
 
-#benchmarks=("FFT" "OCEAN" "RADIX" "FMM" "LU" "BARNES" "black")
-benchmarks=("RADIX" "LU" "BARNES")
+benchmarks=("FFT" "OCEAN" "RADIX" "FMM" "LU" "BARNES" "black")
+#benchmarks=("RADIX" "LU" "BARNES")
 
 dir1=0
 dir2=7
 dir3=56
 dir4=63
+
+pir=0.05
 
 
 # Function to check if a number is in the excluded list
@@ -26,7 +28,7 @@ contains() {
 for benchmark in "${benchmarks[@]}"; do
     echo "Preparing to run ${benchmark}..."
 
-    mkdir -p "traces/${benchmark}"
+    mkdir -p "traces/${pir}/${benchmark}"
 
     # Copying the benchmark-specific file to data0.txt
     cp "64_${benchmark}_processed_corner.txt" "data0.txt"
@@ -72,9 +74,9 @@ for benchmark in "${benchmarks[@]}"; do
             all_attackers+="${number}_"
         done
 
-        ./noxim -config ../config_examples/config_dos.yaml -traffic hybrid table_in.txt 1 ${offset} -sim 50000 > "traces/${benchmark}/A_${all_attackers}O${offset}.txt"
+        ./noxim -config ../config_examples/config_dos.yaml -traffic hybrid table_in.txt 1 ${offset} -sim 50000 > "traces/${pir}/${benchmark}/A_${all_attackers}O${offset}.txt"
         > "$output_file"
-        ./noxim -config ../config_examples/config_dos.yaml -traffic hybrid table_in.txt 1 ${offset} -sim 50000 > "traces/${benchmark}/N_O${offset}.txt"
+        ./noxim -config ../config_examples/config_dos.yaml -traffic hybrid table_in.txt 1 ${offset} -sim 50000 > "traces/${pir}/${benchmark}/N_O${offset}.txt"
 
     done
 
