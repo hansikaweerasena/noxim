@@ -34,50 +34,53 @@ for benchmark in "${benchmarks[@]}"; do
     cp "64_${benchmark}_processed_corner.txt" "data0.txt"
 
     # Inner loop for executing the command with varying traffic trace values
-    for offset in {0..63}; do
+    for offset in {0..1}; do
         echo "Running ${benchmark} with traffic trace 1 ${offset}..."
 
-        # selecting four random attacking nodes
-        declare -a selected_numbers=()
-        # Re-seed RANDOM using nanoseconds from date command
-        sleep 1
+        # Loop to create three different sets of attacking nodes
+        for iteration in {1..3}; do
 
-        while [ ${#selected_numbers[@]} -lt 3 ]; do
-            # Generate a random number between 0 and 63
-            number=$((RANDOM % 64))
+          # selecting four random attacking nodes
+          declare -a selected_numbers=()
+          # Re-seed RANDOM using nanoseconds from date command
+          sleep 1
 
-            # Check if this number is not one of the excluded ones
-            if ! contains $number $offset $dir1 $dir2 $dir3 $dir4 "${selected_numbers[@]}"; then
-                selected_numbers+=($number)
-            fi
+          while [ ${#selected_numbers[@]} -lt 3 ]; do
+              # Generate a random number between 0 and 63
+              number=$((RANDOM % 64))
+
+              # Check if this number is not one of the excluded ones
+              if ! contains $number $offset $dir1 $dir2 $dir3 $dir4 "${selected_numbers[@]}"; then
+                  selected_numbers+=($number)
+              fi
+          done
+
+          # Path to the input file and the output file
+          input_file="t.txt"
+          output_file="table_in.txt"
+
+          # Make sure the output file is empty or create it
+          > "$output_file"
+
+          # Read input file and replace the first column
+          index=0
+          while IFS=' ' read -r col1 col2 col3
+          do
+              # Replace the first column with one of the selected numbers
+              echo "${selected_numbers[$index]} $col2 $col3" >> "$output_file"
+              let index+=1
+          done < "$input_file"
+
+          all_attackers=""
+
+          for number in "${selected_numbers[@]}"; do
+              all_attackers+="${number}_"
+          done
+
+          ./noxim -config ../config_examples/config_dos.yaml -traffic hybrid table_in.txt 1 ${offset} -sim 50000 > "traces_ext/${pir}/${benchmark}/A_${all_attackers}O${offset}.txt"
+          > "$output_file"
+          ./noxim -config ../config_examples/config_dos.yaml -traffic hybrid table_in.txt 1 ${offset} -sim 50000 > "traces_ext/${pir}/${benchmark}/N_O${offset}.txt"
         done
-
-        # Path to the input file and the output file
-        input_file="t.txt"
-        output_file="table_in.txt"
-
-        # Make sure the output file is empty or create it
-        > "$output_file"
-
-        # Read input file and replace the first column
-        index=0
-        while IFS=' ' read -r col1 col2 col3
-        do
-            # Replace the first column with one of the selected numbers
-            echo "${selected_numbers[$index]} $col2 $col3" >> "$output_file"
-            let index+=1
-        done < "$input_file"
-
-        all_attackers=""
-
-        for number in "${selected_numbers[@]}"; do
-            all_attackers+="${number}_"
-        done
-
-        ./noxim -config ../config_examples/config_dos.yaml -traffic hybrid table_in.txt 1 ${offset} -sim 50000 > "traces/${pir}/${benchmark}/A_${all_attackers}O${offset}.txt"
-        > "$output_file"
-        ./noxim -config ../config_examples/config_dos.yaml -traffic hybrid table_in.txt 1 ${offset} -sim 50000 > "traces/${pir}/${benchmark}/N_O${offset}.txt"
-
     done
 
     # Revert the file name back to the original
