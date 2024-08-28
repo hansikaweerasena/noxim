@@ -34,7 +34,7 @@ for benchmark in "${benchmarks[@]}"; do
     cp "64_${benchmark}_processed_corner.txt" "data0.txt"
 
     # Inner loop for executing the command with varying traffic trace values
-    for offset in {0..1}; do
+    for offset in {0..63}; do
         echo "Running ${benchmark} with traffic trace 1 ${offset}..."
 
         # Loop to create three different sets of attacking nodes
