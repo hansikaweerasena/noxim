@@ -140,8 +140,8 @@ trace_filename: ""
 
 min_packet_size: 8
 max_packet_size: 8
-packet_injection_rate: 0.03
-# 0.15 for 1 , 0.08 for 2 , 0.05 for 3 and 0.03 for 4  (update these in t.txt not here)
+packet_injection_rate: 0.04
+# 0.15 for 1 , 0.08 for 2 , 0.05 for 3 and 0.04 for 4  (update these in t.txt not here)
 probability_of_retransmission: 0.01
 
 # Traffic distribution:
