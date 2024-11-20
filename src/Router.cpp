@@ -545,8 +545,10 @@ void Router::configure(const int _id,
 
     if (GlobalParams::topology == TOPOLOGY_MESH)
     {
-	int row = _id / GlobalParams::mesh_dim_x;
-	int col = _id % GlobalParams::mesh_dim_x;
+	int layer = _id / (GlobalParams::mesh_dim_x * GlobalParams::mesh_dim_y);
+    int temp = _id % (GlobalParams::mesh_dim_x * GlobalParams::mesh_dim_y);
+    int col = temp / GlobalParams::mesh_dim_x;
+    int row = temp % GlobalParams::mesh_dim_x;
 
 	for (int vc = 0; vc<GlobalParams::n_virtual_channels; vc++)
 	{
@@ -558,6 +560,10 @@ void Router::configure(const int _id,
 	      buffer[DIRECTION_WEST][vc].Disable();
 	    if (col == GlobalParams::mesh_dim_x-1)
 	      buffer[DIRECTION_EAST][vc].Disable();
+		if (layer == 0)
+	      buffer[DIRECTION_UP][vc].Disable();
+	    if (layer == GlobalParams::mesh_dim_z-1)
+	      buffer[DIRECTION_DOWN][vc].Disable();
 	}
     }
 
@@ -579,6 +585,10 @@ int Router::reflexDirection(int direction) const
 	return DIRECTION_EAST;
     if (direction == DIRECTION_SOUTH)
 	return DIRECTION_NORTH;
+	if (direction == DIRECTION_UP)
+	return DIRECTION_DOWN;
+    if (direction == DIRECTION_DOWN)
+	return DIRECTION_UP;
 
     // you shouldn't be here
     assert(false);
@@ -611,6 +621,16 @@ int Router::getNeighborId(int _id, int direction) const
 	if (my_coord.x == 0)
 	    return NOT_VALID;
 	my_coord.x--;
+	break;
+	case DIRECTION_UP:
+	if (my_coord.z == 0)
+	    return NOT_VALID;
+	my_coord.z--;
+	break;
+    case DIRECTION_DOWN:
+	if (my_coord.z == GlobalParams::mesh_dim_z - 1)
+	    return NOT_VALID;
+	my_coord.z++;
 	break;
     default:
 	LOG << "Direction not valid : " << direction;

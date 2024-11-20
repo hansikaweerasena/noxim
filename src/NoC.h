@@ -29,6 +29,8 @@ struct sc_signal_NSWE
     sc_signal<T> west;
     sc_signal<T> south;
     sc_signal<T> north;
+    sc_signal<T> up;
+    sc_signal<T> down;
 };
 
 template <typename T>
@@ -38,6 +40,8 @@ struct sc_signal_NSWEH
     sc_signal<T> west;
     sc_signal<T> south;
     sc_signal<T> north;
+    sc_signal<T> up;
+    sc_signal<T> down;
     sc_signal<T> to_hub;
     sc_signal<T> from_hub;
 };
@@ -51,14 +55,15 @@ SC_MODULE(NoC)
     sc_in < bool > reset;	// The reset signal for the NoC
 
     // Signals mesh and switch bloc in delta topologies
-    sc_signal_NSWEH<bool> **req;
-    sc_signal_NSWEH<bool> **ack;
-    sc_signal_NSWEH<TBufferFullStatus> **buffer_full_status;
-    sc_signal_NSWEH<Flit> **flit;
-    sc_signal_NSWE<int> **free_slots;
+    //Triple pointers for 3d
+    sc_signal_NSWEH<bool> ***req;
+    sc_signal_NSWEH<bool> ***ack;
+    sc_signal_NSWEH<TBufferFullStatus> ***buffer_full_status;
+    sc_signal_NSWEH<Flit> ***flit;
+    sc_signal_NSWE<int> ***free_slots;
 
     // NoP
-    sc_signal_NSWE<NoP_data> **nop_data;
+    sc_signal_NSWE<NoP_data> ***nop_data;
 
     //signals for connecting Core2Hub (just to test wireless in Butterfly)
     sc_signal<Flit> *flit_from_hub;
@@ -76,6 +81,7 @@ SC_MODULE(NoC)
 
 
     // Matrix of tiles
+    //T is already triple pointer?
     Tile ***t;
     Tile ** core;
 

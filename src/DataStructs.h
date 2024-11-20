@@ -19,9 +19,10 @@ class Coord {
   public:
     int x;			// X coordinate
     int y;			// Y coordinate
+    int z;			// Z coordinate
 
     inline bool operator ==(const Coord & coord) const {
-	return (coord.x == x && coord.y == y);
+	return (coord.x == x && coord.y == y && coord.z == z);
 }};
 
 // FlitType -- Flit type enumeration
@@ -111,7 +112,11 @@ struct NoP_data {
 		&& nop_data.channel_status_neighbor[2] ==
 		channel_status_neighbor[2]
 		&& nop_data.channel_status_neighbor[3] ==
-		channel_status_neighbor[3]);
+		channel_status_neighbor[3]
+        && nop_data.channel_status_neighbor[4] ==
+		channel_status_neighbor[4]
+        && nop_data.channel_status_neighbor[5] ==
+		channel_status_neighbor[5]);
     };
 };
 

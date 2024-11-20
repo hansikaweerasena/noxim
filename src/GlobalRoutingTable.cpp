@@ -16,6 +16,14 @@ LinkId direction2ILinkId(const int node_id, const int dir)
     int node_src;
 
     switch (dir) {
+	case DIRECTION_UP:
+	node_src = node_id - (GlobalParams::mesh_dim_x * GlobalParams::mesh_dim_y);
+	break;
+
+    case DIRECTION_DOWN:
+	node_src = node_id + (GlobalParams::mesh_dim_x * GlobalParams::mesh_dim_y);
+	break;
+
     case DIRECTION_NORTH:
 	node_src = node_id - GlobalParams::mesh_dim_x;
 	break;
@@ -59,6 +67,10 @@ int oLinkId2Direction(const LinkId & out_link)
 	return DIRECTION_NORTH;
     else if (dst == src + GlobalParams::mesh_dim_x)
 	return DIRECTION_SOUTH;
+	else if (dst == src - (GlobalParams::mesh_dim_x * GlobalParams::mesh_dim_y))
+	return DIRECTION_UP;
+    else if (dst == src + (GlobalParams::mesh_dim_x * GlobalParams::mesh_dim_y))
+	return DIRECTION_DOWN;
     else
 	assert(false);
     return 0;

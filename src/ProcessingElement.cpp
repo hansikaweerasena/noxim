@@ -309,7 +309,7 @@ Packet ProcessingElement::trafficLocal()
 
     vector<int> dst_set;
 
-    int max_id = (GlobalParams::mesh_dim_x * GlobalParams::mesh_dim_y);
+    int max_id = (GlobalParams::mesh_dim_x * GlobalParams::mesh_dim_y * GlobalParams::mesh_dim_z);
 
     for (int i=0;i<max_id;i++)
     {
@@ -341,6 +341,7 @@ int ProcessingElement::findRandomDestination(int id, int hops)
 
     int inc_y = rand()%2?-1:1;
     int inc_x = rand()%2?-1:1;
+    int inc_z = rand()%2?-1:1;
     
     Coord current =  id2Coord(id);
     
@@ -361,6 +362,12 @@ int ProcessingElement::findRandomDestination(int id, int hops)
 	if (current.y==GlobalParams::mesh_dim_y-1)
 	    if (inc_y>0) inc_y=0;
 
+    if (current.z==0)
+	    if (inc_z<0) inc_z=0;
+
+	if (current.z==GlobalParams::mesh_dim_z-1)
+	    if (inc_z>0) inc_z=0;
+
 	if (rand()%2)
 	    current.x +=inc_x;
 	else
@@ -372,7 +379,7 @@ int ProcessingElement::findRandomDestination(int id, int hops)
 
 int roulette()
 {
-    int slices = GlobalParams::mesh_dim_x + GlobalParams::mesh_dim_y -2;
+    int slices = GlobalParams::mesh_dim_x + GlobalParams::mesh_dim_y + GlobalParams::mesh_dim_z -2;
 
 
     double r = rand()/(double)RAND_MAX;
@@ -415,7 +422,7 @@ Packet ProcessingElement::trafficRandom()
     int max_id;
 
     if (GlobalParams::topology == TOPOLOGY_MESH)
-	max_id = (GlobalParams::mesh_dim_x * GlobalParams::mesh_dim_y) - 1; //Mesh 
+	max_id = (GlobalParams::mesh_dim_x * GlobalParams::mesh_dim_y * GlobalParams::mesh_dim_z) - 1; //Mesh 
     else    // other delta topologies
 	max_id = GlobalParams::n_delta_tiles-1; 
 
@@ -474,8 +481,10 @@ Packet ProcessingElement::trafficTranspose1()
     // Transpose 1 destination distribution
     src.x = id2Coord(p.src_id).x;
     src.y = id2Coord(p.src_id).y;
+    src.z = id2Coord(p.src_id).z;
     dst.x = GlobalParams::mesh_dim_x - 1 - src.y;
     dst.y = GlobalParams::mesh_dim_y - 1 - src.x;
+    dst.z = GlobalParams::mesh_dim_y - 1 - src.z;
     fixRanges(src, dst);
     p.dst_id = coord2Id(dst);
 

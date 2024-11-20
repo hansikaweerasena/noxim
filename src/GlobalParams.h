@@ -23,13 +23,15 @@ using namespace std;
 #define POWER_CONFIG_FILENAME  "power.yaml"
 
 // Define the directions as numbers
-#define DIRECTIONS              4
+#define DIRECTIONS              6
 #define DIRECTION_NORTH         0
 #define DIRECTION_EAST          1
 #define DIRECTION_SOUTH         2
 #define DIRECTION_WEST          3
-#define DIRECTION_LOCAL         4
-#define DIRECTION_HUB           5
+#define DIRECTION_UP            4
+#define DIRECTION_DOWN          5
+#define DIRECTION_LOCAL         6
+#define DIRECTION_HUB           7
 #define DIRECTION_HUB_RELAY     5000
 #define DIRECTION_WIRELESS    747
 
@@ -147,6 +149,7 @@ struct GlobalParams {
     static string topology;
     static int mesh_dim_x;
     static int mesh_dim_y;
+    static int mesh_dim_z;
     static int n_delta_tiles;
     static double r2r_link_length;
     static double r2h_link_length;

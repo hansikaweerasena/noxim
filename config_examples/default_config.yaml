@@ -15,6 +15,8 @@
 # X and Y mesh sizes
 mesh_dim_x: 4
 mesh_dim_y: 4
+# Testing 4x4x4 for 3d
+mesh_dim_z: 4
 # number of flits for each router buffer
 buffer_depth: 4
 # size of flits, in bits
@@ -164,3 +166,7 @@ traffic_distribution: TRAFFIC_RANDOM
 # when traffic table based is specified, use the following
 # configuration file
 traffic_table_filename: "t.txt"
+# trace files should have fixed names data0.txt, data1.txt and so on ...
+traffic_no_trace_files: 1
+# offset for changing the node IDs
+traffic_trace_node_offset: 0

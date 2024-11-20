@@ -18,6 +18,7 @@ string GlobalParams::topology;
 
 int GlobalParams::mesh_dim_x;
 int GlobalParams::mesh_dim_y;
+int GlobalParams::mesh_dim_z;
 
 int GlobalParams::n_delta_tiles;
 

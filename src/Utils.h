@@ -170,7 +170,7 @@ inline ostream & operator <<(ostream & os, const TBufferFullStatus & bfs)
 
 inline ostream & operator <<(ostream & os, const Coord & coord)
 {
-    os << "(" << coord.x << "," << coord.y << ")";
+    os << "(" << coord.x << "," << coord.y << "," << coord.z << ")";
 
     return os;
 }
@@ -209,11 +209,14 @@ inline Coord id2Coord(int id)
     Coord coord;
     if (GlobalParams::topology == TOPOLOGY_MESH)
     {
-        coord.x = id % GlobalParams::mesh_dim_x;
-        coord.y = id / GlobalParams::mesh_dim_x;
+        coord.z = id / (GlobalParams::mesh_dim_x * GlobalParams::mesh_dim_y);
+        int temp = id % (GlobalParams::mesh_dim_x * GlobalParams::mesh_dim_y);
+        coord.y = temp / GlobalParams::mesh_dim_x;
+        coord.x = temp % GlobalParams::mesh_dim_x;
 
         assert(coord.x < GlobalParams::mesh_dim_x);
         assert(coord.y < GlobalParams::mesh_dim_y);
+        assert(coord.z < GlobalParams::mesh_dim_z);
     }
     else // other delta topologies
     {
@@ -233,8 +236,9 @@ inline int coord2Id(const Coord & coord)
     int id;
     if (GlobalParams::topology == TOPOLOGY_MESH)
     {
-        id = (coord.y * GlobalParams::mesh_dim_x) + coord.x;
-        assert(id < GlobalParams::mesh_dim_x * GlobalParams::mesh_dim_y);
+        //ID calculation keeps the same x and y scaling while adding another dimension
+        id = (coord.z * GlobalParams::mesh_dim_x * GlobalParams::mesh_dim_y) + (coord.y * GlobalParams::mesh_dim_x) + coord.x;
+        assert(id < GlobalParams::mesh_dim_x * GlobalParams::mesh_dim_y * GlobalParams::mesh_dim_z);
     }
     else
     {   //use only for switch bloc in delta topologies

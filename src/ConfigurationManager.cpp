@@ -55,6 +55,7 @@ void loadConfiguration() {
     if (GlobalParams::topology == TOPOLOGY_MESH) {
         GlobalParams::mesh_dim_x = readParam<int>(config, "mesh_dim_x");
         GlobalParams::mesh_dim_y = readParam<int>(config, "mesh_dim_y");
+        GlobalParams::mesh_dim_z = readParam<int>(config, "mesh_dim_z");
     }
 	//Delta network params
     if (GlobalParams::topology == TOPOLOGY_BASELINE  ||
@@ -264,6 +265,7 @@ void showConfig()
       // << "- trace_filename = " << GlobalParams::trace_filename << endl
          << "- mesh_dim_x = " << GlobalParams::mesh_dim_x << endl
          << "- mesh_dim_y = " << GlobalParams::mesh_dim_y << endl
+         << "- mesh_dim_z = " << GlobalParams::mesh_dim_z << endl
          << "- buffer_depth = " << GlobalParams::buffer_depth << endl
          << "- n_virtual_channels = " << GlobalParams::n_virtual_channels << endl
          << "- max_packet_size = " << GlobalParams::max_packet_size << endl
@@ -370,7 +372,8 @@ void checkConfiguration()
 	if (GlobalParams::topology==TOPOLOGY_MESH){
 		if (GlobalParams::hotspots[i].first >=
 		    GlobalParams::mesh_dim_x *
-		    GlobalParams::mesh_dim_y) {
+		    GlobalParams::mesh_dim_y *
+            GlobalParams::mesh_dim_z) {
 		    cerr << "Error: hotspot node " << GlobalParams::
 			hotspots[i].first << " is invalid (out of range)" << endl;
 		    exit(1);

@@ -81,6 +81,10 @@ int sc_main(int arg_num, char *arg_vet[])
 		sc_trace(tf, n->req[i][j].south, label);
 		sprintf(label, "req(%02d)(%02d).north", i, j);
 		sc_trace(tf, n->req[i][j].north, label);
+        sprintf(label, "req(%02d)(%02d).up", i, j);
+		sc_trace(tf, n->req[i][j].up, label);
+		sprintf(label, "req(%02d)(%02d).down", i, j);
+		sc_trace(tf, n->req[i][j].down, label);
 
 		sprintf(label, "ack(%02d)(%02d).east", i, j);
 		sc_trace(tf, n->ack[i][j].east, label);
@@ -90,6 +94,10 @@ int sc_main(int arg_num, char *arg_vet[])
 		sc_trace(tf, n->ack[i][j].south, label);
 		sprintf(label, "ack(%02d)(%02d).north", i, j);
 		sc_trace(tf, n->ack[i][j].north, label);
+        sprintf(label, "ack(%02d)(%02d).up", i, j);
+		sc_trace(tf, n->ack[i][j].up, label);
+		sprintf(label, "ack(%02d)(%02d).down", i, j);
+		sc_trace(tf, n->ack[i][j].down, label);
 	    }
 	}
     }
