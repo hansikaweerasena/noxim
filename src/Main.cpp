@@ -71,33 +71,35 @@ int sc_main(int arg_num, char *arg_vet[])
 
 	for (int i = 0; i < GlobalParams::mesh_dim_x; i++) {
 	    for (int j = 0; j < GlobalParams::mesh_dim_y; j++) {
-		char label[64];
+            for (int k = 0; j < GlobalParams::mesh_dim_z; k++) {
+            char label[64];
 
-		sprintf(label, "req(%02d)(%02d).east", i, j);
-		sc_trace(tf, n->req[i][j].east, label);
-		sprintf(label, "req(%02d)(%02d).west", i, j);
-		sc_trace(tf, n->req[i][j].west, label);
-		sprintf(label, "req(%02d)(%02d).south", i, j);
-		sc_trace(tf, n->req[i][j].south, label);
-		sprintf(label, "req(%02d)(%02d).north", i, j);
-		sc_trace(tf, n->req[i][j].north, label);
-        sprintf(label, "req(%02d)(%02d).up", i, j);
-		sc_trace(tf, n->req[i][j].up, label);
-		sprintf(label, "req(%02d)(%02d).down", i, j);
-		sc_trace(tf, n->req[i][j].down, label);
+            sprintf(label, "req(%02d)(%02d).east", i, j);
+            sc_trace(tf, n->req[i][j][k].east, label);
+            sprintf(label, "req(%02d)(%02d).west", i, j);
+            sc_trace(tf, n->req[i][j][k].west, label);
+            sprintf(label, "req(%02d)(%02d).south", i, j);
+            sc_trace(tf, n->req[i][j][k].south, label);
+            sprintf(label, "req(%02d)(%02d).north", i, j);
+            sc_trace(tf, n->req[i][j][k].north, label);
+            sprintf(label, "req(%02d)(%02d).up", i, j);
+            sc_trace(tf, n->req[i][j][k].up, label);
+            sprintf(label, "req(%02d)(%02d).down", i, j);
+            sc_trace(tf, n->req[i][j][k].down, label);
 
-		sprintf(label, "ack(%02d)(%02d).east", i, j);
-		sc_trace(tf, n->ack[i][j].east, label);
-		sprintf(label, "ack(%02d)(%02d).west", i, j);
-		sc_trace(tf, n->ack[i][j].west, label);
-		sprintf(label, "ack(%02d)(%02d).south", i, j);
-		sc_trace(tf, n->ack[i][j].south, label);
-		sprintf(label, "ack(%02d)(%02d).north", i, j);
-		sc_trace(tf, n->ack[i][j].north, label);
-        sprintf(label, "ack(%02d)(%02d).up", i, j);
-		sc_trace(tf, n->ack[i][j].up, label);
-		sprintf(label, "ack(%02d)(%02d).down", i, j);
-		sc_trace(tf, n->ack[i][j].down, label);
+            sprintf(label, "ack(%02d)(%02d).east", i, j);
+            sc_trace(tf, n->ack[i][j][k].east, label);
+            sprintf(label, "ack(%02d)(%02d).west", i, j);
+            sc_trace(tf, n->ack[i][j][k].west, label);
+            sprintf(label, "ack(%02d)(%02d).south", i, j);
+            sc_trace(tf, n->ack[i][j][k].south, label);
+            sprintf(label, "ack(%02d)(%02d).north", i, j);
+            sc_trace(tf, n->ack[i][j][k].north, label);
+            sprintf(label, "ack(%02d)(%02d).up", i, j);
+            sc_trace(tf, n->ack[i][j][k].up, label);
+            sprintf(label, "ack(%02d)(%02d).down", i, j);
+            sc_trace(tf, n->ack[i][j][k].down, label);
+            }
 	    }
 	}
     }

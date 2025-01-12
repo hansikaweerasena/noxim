@@ -81,8 +81,7 @@ SC_MODULE(NoC)
 
 
     // Matrix of tiles
-    //T is already triple pointer?
-    Tile ***t;
+    Tile ****t;
     Tile ** core;
 
     map<int, Hub*> hub;
@@ -105,12 +104,12 @@ SC_MODULE(NoC)
 	if (GlobalParams::topology == TOPOLOGY_MESH)
 	    // Build the Mesh
 	    buildMesh();
-	else if (GlobalParams::topology == TOPOLOGY_BUTTERFLY)
-        buildButterfly(); 
-	else if (GlobalParams::topology == TOPOLOGY_BASELINE)
-	    buildBaseline();
-	else if (GlobalParams::topology == TOPOLOGY_OMEGA)
-	    buildOmega();
+	// else if (GlobalParams::topology == TOPOLOGY_BUTTERFLY)
+    //     buildButterfly(); 
+	// else if (GlobalParams::topology == TOPOLOGY_BASELINE)
+	//     buildBaseline();
+	// else if (GlobalParams::topology == TOPOLOGY_OMEGA)
+	//     buildOmega();
 	else {
 	    cerr << "ERROR: Topology " << GlobalParams::topology << " is not yet supported." << endl;
 	    exit(0);
@@ -119,11 +118,11 @@ SC_MODULE(NoC)
 	// out of yaml configuration (experimental features)
 	//GlobalParams::channel_selection = CHSEL_FIRST_FREE;
 
-	if (GlobalParams::ascii_monitor)
-	{
-	    SC_METHOD(asciiMonitor);
-	    sensitive << clock.pos();
-	}
+	// if (GlobalParams::ascii_monitor)
+	// {
+	//     SC_METHOD(asciiMonitor);
+	//     sensitive << clock.pos();
+	// }
 
     }
 
@@ -133,11 +132,12 @@ SC_MODULE(NoC)
   private:
 
     void buildMesh();
-    void buildButterfly();
-    void buildBaseline();
-    void buildOmega();
+    //CURRENTLY DISABLED
+    //void buildButterfly();
+    //void buildBaseline();
+    //void buildOmega();
     void buildCommon();
-    void asciiMonitor();
+    //void asciiMonitor();
     int * hub_connected_ports;
 };
 
