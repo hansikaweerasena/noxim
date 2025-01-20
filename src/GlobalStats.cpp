@@ -493,9 +493,10 @@ void GlobalStats::showStats(std::ostream & out, bool detailed)
 
     if (GlobalParams::topology == TOPOLOGY_MESH)
     {
+	for (int z = 0; z < GlobalParams::mesh_dim_z; z++)
 	for (int y = 0; y < GlobalParams::mesh_dim_y; y++)
 	    for (int x = 0; x < GlobalParams::mesh_dim_x; x++)
-		out << "PE["<<x << "," << y<< "]" << noc->t[x][y]->pe->getQueueSize()<< ",";
+		out << "PE["<<x << "," << y<< "]" << noc->t[x][y][z]->pe->getQueueSize()<< ",";
     }
     else // other delta topologies
     {

@@ -2261,7 +2261,7 @@ void NoC::buildMesh()
 	    t[i][j][k] = new Tile(tile_name, tile_id);
 
 	    // Tell to the router its coordinates
-	    t[i][j][k]->r->configure(j * GlobalParams::mesh_dim_x + i,
+	    t[i][j][k]->r->configure((k * GlobalParams::mesh_dim_x * GlobalParams::mesh_dim_y) + (j * GlobalParams::mesh_dim_x) + i,
 				  GlobalParams::stats_warm_up_time,
 				  GlobalParams::buffer_depth,
 				  grtable);
@@ -2483,8 +2483,8 @@ void NoC::buildMesh()
 
 	for (int j = 0; j <= GlobalParams::mesh_dim_y; j++) {
 	for (int i = 0; i <= GlobalParams::mesh_dim_x; i++) {
-	req[i][j][0].up = 0;
-	ack[i][j][0].down = 0;
+	req[i][j][0].down = 0;
+	ack[i][j][0].up = 0;
 	req[i][j][GlobalParams::mesh_dim_z].up = 0;
 	ack[i][j][GlobalParams::mesh_dim_z].down = 0;
 

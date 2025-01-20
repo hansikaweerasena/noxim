@@ -484,7 +484,7 @@ Packet ProcessingElement::trafficTranspose1()
     src.z = id2Coord(p.src_id).z;
     dst.x = GlobalParams::mesh_dim_x - 1 - src.y;
     dst.y = GlobalParams::mesh_dim_y - 1 - src.x;
-    dst.z = GlobalParams::mesh_dim_y - 1 - src.z;
+    dst.z = GlobalParams::mesh_dim_z - 1 - src.z;
     fixRanges(src, dst);
     p.dst_id = coord2Id(dst);
 

@@ -13,10 +13,9 @@
 #   BUTTERFLY, BASELINE, and OMEGA are Delta Network topologies
 topology: MESH
 # X and Y mesh sizes
-mesh_dim_x: 2
-mesh_dim_y: 2
-# Testing 4x4x4 for 3d
-mesh_dim_z: 2
+mesh_dim_x: 3
+mesh_dim_y: 3
+mesh_dim_z: 3
 # number of flits for each router buffer
 buffer_depth: 4
 # size of flits, in bits
@@ -121,7 +120,7 @@ clock_period_ps: 1000
 # duration of reset signal assertion, expressed in cycles
 reset_time: 1000
 # overal simulation lenght, expressed in cycles
-simulation_time: 10000
+simulation_time: 2000
 # collect stats after a given number of cycles
 stats_warm_up_time: 1000
 # power breakdown, nodes communication details
@@ -142,7 +141,7 @@ use_wirxsleep: false
 #   VERBOSE_LOW
 #   VERBOSE_MEDIUM
 #   VERBOSE_HIGH
-verbose_mode: VERBOSE_OFF
+verbose_mode: VERBOSE_HIGH
 
 # Trace
 trace_mode: false
@@ -162,7 +161,7 @@ probability_of_retransmission: 0.01
 #   TRAFFIC_BIT_REVERSAL
 #   TRAFFIC_SHUFFLE
 #   TRAFFIC_BUTTERFLY
-traffic_distribution: TRAFFIC_RANDOM
+traffic_distribution: TRAFFIC_TABLE_BASED
 # when traffic table based is specified, use the following
 # configuration file
 traffic_table_filename: "t.txt"

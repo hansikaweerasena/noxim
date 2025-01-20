@@ -220,12 +220,12 @@ inline Coord id2Coord(int id)
     }
     else // other delta topologies
     {
-        id = id - GlobalParams::n_delta_tiles;
-        coord.x = id / (int)(GlobalParams::n_delta_tiles/2);
-        coord.y = id % (int)(GlobalParams::n_delta_tiles/2);
+        // id = id - GlobalParams::n_delta_tiles;
+        // coord.x = id / (int)(GlobalParams::n_delta_tiles/2);
+        // coord.y = id % (int)(GlobalParams::n_delta_tiles/2);
 
-        assert(coord.x < log2(GlobalParams::n_delta_tiles));
-        assert(coord.y < (GlobalParams::n_delta_tiles/2));
+        // assert(coord.x < log2(GlobalParams::n_delta_tiles));
+        // assert(coord.y < (GlobalParams::n_delta_tiles/2));
 
     }
     return coord;
@@ -242,8 +242,8 @@ inline int coord2Id(const Coord & coord)
     }
     else
     {   //use only for switch bloc in delta topologies
-        id = (coord.x * (GlobalParams::n_delta_tiles/2)) + coord.y + GlobalParams::n_delta_tiles;
-        assert(id > (GlobalParams::n_delta_tiles-1));
+        // id = (coord.x * (GlobalParams::n_delta_tiles/2)) + coord.y + GlobalParams::n_delta_tiles;
+        // assert(id > (GlobalParams::n_delta_tiles-1));
     }
 
     return id;
