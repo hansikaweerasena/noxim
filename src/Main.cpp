@@ -71,7 +71,7 @@ int sc_main(int arg_num, char *arg_vet[])
 
 	for (int i = 0; i < GlobalParams::mesh_dim_x; i++) {
 	    for (int j = 0; j < GlobalParams::mesh_dim_y; j++) {
-            for (int k = 0; j < GlobalParams::mesh_dim_z; k++) {
+            for (int k = 0; k < GlobalParams::mesh_dim_z; k++) {
             char label[64];
 
             sprintf(label, "req(%02d)(%02d).east", i, j);
