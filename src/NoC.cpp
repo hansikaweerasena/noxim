@@ -2261,7 +2261,7 @@ void NoC::buildMesh()
 	    t[i][j][k] = new Tile(tile_name, tile_id);
 
 	    // Tell to the router its coordinates
-	    t[i][j][k]->r->configure((k * GlobalParams::mesh_dim_x * GlobalParams::mesh_dim_y) + (j * GlobalParams::mesh_dim_x) + i,
+	    t[i][j][k]->r->configure(tile_id,
 				  GlobalParams::stats_warm_up_time,
 				  GlobalParams::buffer_depth,
 				  grtable);
@@ -2274,7 +2274,7 @@ void NoC::buildMesh()
 
 
 	    // Tell to the PE its coordinates
-	    t[i][j][k]->pe->local_id = j * GlobalParams::mesh_dim_x + i;
+	    t[i][j][k]->pe->local_id = tile_id;
 
 	    // Check for traffic table availability
    		if (GlobalParams::traffic_distribution == TRAFFIC_TABLE_BASED)
