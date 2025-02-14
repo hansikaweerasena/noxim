@@ -40,6 +40,30 @@ void Router::rxProcess()
 	// This process simply sees a flow of incoming flits. All arbitration
 	// and wormhole related issues are addressed in the txProcess()
 	//assert(false);
+
+	//Receive TSV flits 
+	if (!tsv_link->tsv_buffer.empty()) {
+		//Compare z-coords of flit destination and router
+		int targetZ = id2Coord(tsv_link->tsv_buffer.front().dst_id).z;
+		int thisZ = id2Coord(this->local_id).z;
+		if (targetZ == thisZ) { 
+			//Reception
+			Flit received_flit = tsv_link->tsv_buffer.front();
+			int vc = received_flit.vc_id;
+			tsv_link->tsv_buffer.pop();
+			//Recieve at terminal opposite the direction the flit travels
+			if ((tsv_link->direction == DIRECTION_DOWN) && !buffer[DIRECTION_UP][vc].IsFull()) {
+				buffer[DIRECTION_UP][vc].Push(received_flit);
+			}
+			else if ((tsv_link->direction == DIRECTION_UP) && !buffer[DIRECTION_DOWN][vc].IsFull()) {
+				buffer[DIRECTION_DOWN][vc].Push(received_flit);
+			}
+			else {
+				LOG << "tsv error" << endl;
+			}
+		}
+	}
+
 	for (int i = 0; i < DIRECTIONS + 2; i++) {
 	    // To accept a new flit, the following conditions must match:
 	    // 1) there is an incoming request
@@ -202,6 +226,16 @@ void Router::txProcess()
 		  Flit flit = buffer[i][vc].Front();
 		  //LOG<< "*****TX***Direction= "<<i<< "************"<<endl;
 		  //LOG<<"_cl_tx="<<current_level_tx[o]<<"req_tx="<<req_tx[o].read()<<" _ack= "<<ack_tx[o].read()<< endl;
+
+		  //If direction is up or down, send to TSV 
+		  if ((o == DIRECTION_DOWN) || (o == DIRECTION_UP)) {
+			//Place in TSV_input buffer (to guarantee in order flit transmission)
+			tsv_input_buffer.push(flit);
+			buffer[i][vc].Pop();
+			//Push direction info as well
+			dir_queue.push(o);
+		  }
+		  else {
 		  
 		  if ( (current_level_tx[o] == ack_tx[o].read()) &&
 		       (buffer_full_status_tx[o].read().mask[vc] == false) ) 
@@ -265,10 +299,21 @@ void Router::txProcess()
 			  reservation_table.release(i,flit.vc_id,o);
 			  */
 		  }
+		  }
 	      }
 	  } // if not reserved 
 	 // else LOG<<"we have no reservation for direction "<<i<< endl;
       } // for loop directions
+
+	  //Once per cycle, if tsv_input_buffer has items, try to gain access of bus 
+		if ((!tsv_input_buffer.empty()) && (tsv_link->reqAccess(local_id))) {
+			//Push first flit to bus
+        	tsv_link->tsv_buffer.push(tsv_input_buffer.front());
+			tsv_input_buffer.pop();
+			//Set direction based on queue
+			tsv_link->direction = dir_queue.front();
+			dir_queue.pop();
+    	} 
 
       if ((int)(sc_time_stamp().to_double() / GlobalParams::clock_period_ps)%2==0)
 	  reservation_table.updateIndex();
@@ -681,4 +726,8 @@ bool Router::connectedHubs(int src_hub, int dst_hub) {
         return false;
     else
         return true;
+}
+
+void Router::setTSV(TSV* tsv) {
+	tsv_link = tsv;
 }

@@ -87,15 +87,17 @@ double GlobalStats::getMaxDelay()
     {
 	for (int y = 0; y < GlobalParams::mesh_dim_y; y++)
 	    for (int x = 0; x < GlobalParams::mesh_dim_x; x++) 
-	    {
-		Coord coord;
-		coord.x = x;
-		coord.y = y;
-		int node_id = coord2Id(coord);
-		double d = getMaxDelay(node_id);
-		if (d > maxd)
-		    maxd = d;
-	    }
+			for (int z = 0; z < GlobalParams::mesh_dim_z; z++)
+			{
+			Coord coord;
+			coord.x = x;
+			coord.y = y;
+			coord.z = z;
+			int node_id = coord2Id(coord);
+			double d = getMaxDelay(node_id);
+			if (d > maxd)
+				maxd = d;
+			}
 
     }
     else  // other delta topologies 

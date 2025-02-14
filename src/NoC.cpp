@@ -131,6 +131,12 @@ void NoC::buildCommon()
 	// Var to track Hub connected ports
 	hub_connected_ports = (int *) calloc(GlobalParams::hub_configuration.size(), sizeof(int));
 
+	// Create TSVs for each (x, y) coordinate
+	for (int i = 0; i < GlobalParams::mesh_dim_x; i++) {
+		for (int j = 0; j < GlobalParams::mesh_dim_y; j++) {
+        	tsv_map[{i, j}] = new TSV(i, j);  // Create one TSV per (x, y)
+    	}
+	}
 }
 
 // // void NoC::buildButterfly()
@@ -2271,7 +2277,7 @@ void NoC::buildMesh()
 					      string(GlobalParams::routing_algorithm),
 					      "default");
 					      
-
+		t[i][j][k]->r->setTSV(tsv_map[{i, j}]); // Assign shared TSV
 
 	    // Tell to the PE its coordinates
 	    t[i][j][k]->pe->local_id = tile_id;

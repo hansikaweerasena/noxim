@@ -25,6 +25,7 @@
 #include "selectionStrategies/SelectionStrategy.h"
 #include "selectionStrategies/Selection_NOP.h"
 #include "selectionStrategies/Selection_BUFFER_LEVEL.h"
+#include "TSV.h"
 
 using namespace std;
 
@@ -115,6 +116,10 @@ SC_MODULE(Router)
 
   private:
 
+    TSV* tsv_link; // Pointer to the shared TSV at (x, y)
+    std::queue<Flit> tsv_input_buffer;
+    std::queue<int> dir_queue;
+
     // performs actual routing + selection
     int route(const RouteData & route_data);
 
@@ -141,6 +146,8 @@ SC_MODULE(Router)
     void ShowBuffersStats(std::ostream & out);
 
     bool connectedHubs(int src_hub, int dst_hub);
+
+    void setTSV(TSV* tsv); // Function to set the router's TSV link
 };
 
 #endif

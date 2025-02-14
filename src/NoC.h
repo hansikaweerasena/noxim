@@ -19,6 +19,7 @@
 #include "Hub.h"
 #include "Channel.h"
 #include "TokenRing.h"
+#include "TSV.h"
 
 using namespace std;
 
@@ -83,6 +84,8 @@ SC_MODULE(NoC)
     // Matrix of tiles
     Tile ****t;
     Tile ** core;
+
+    std::map<std::pair<int, int>, TSV*> tsv_map;
 
     map<int, Hub*> hub;
     map<int, Channel*> channel;
