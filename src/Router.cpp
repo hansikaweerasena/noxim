@@ -234,6 +234,15 @@ void Router::txProcess()
 			buffer[i][vc].Pop();
 			//Push direction info as well
 			dir_queue.push(o);
+
+			//Since reservation was made
+			if (flit.flit_type == FLIT_TYPE_TAIL)
+		      {
+			  TReservation r;
+			  r.input = i;
+			  r.vc = vc;
+			  reservation_table.release(r,o);
+		      }
 		  }
 		  else {
 		  
