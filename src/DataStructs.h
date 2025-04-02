@@ -139,6 +139,9 @@ struct TBufferFullStatus {
 struct Flit {
     int src_id;
     int dst_id;
+    int fin_id; //Enables temp destinations
+    bool route_xy; //Routing algorithm: true for xy, false for yx
+    bool flip_route; //Flip routing algorithm when reaches temp destination
     int vc_id; // Virtual Channel
     FlitType flit_type;	// The flit type (FLIT_TYPE_HEAD, FLIT_TYPE_BODY, FLIT_TYPE_TAIL)
     int sequence_no;		// The sequence number of the flit inside the packet

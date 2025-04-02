@@ -148,6 +148,22 @@ void Router::txProcess()
 		  Flit flit = buffer[i][vc].Front();
 		  power.bufferRouterFront();
 
+		  //Re-route flits if they reached the temporary destination
+		  if (flit.dst_id == local_id && flit.dst_id != flit.fin_id) {
+			flit.dst_id == flit.fin_id;
+			//Flip routing algorithm if necessary
+			if (flit.flip_route) {
+				if (flit.route_xy) {
+					flit.route_xy = false;
+					flit.vc_id = 1;
+				}
+				else {
+					flit.route_xy = true;
+					flit.vc_id = 0;
+				}
+			}
+		  }
+
 		  if (flit.flit_type == FLIT_TYPE_HEAD) 
 		    {
 		      // prepare data for routing

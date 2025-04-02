@@ -16,21 +16,42 @@ vector<int> Routing_XY::route(Router * router, const RouteData & routeData)
     Coord current = id2Coord(routeData.current_id);
     Coord destination = id2Coord(routeData.dst_id);
     vector <int> directions;
+    
+    //xy routing
+    if (routeData.vc_id == 0) {
+        if (destination.x > current.x)
+            directions.push_back(DIRECTION_EAST);
+        else if (destination.x < current.x)
+            directions.push_back(DIRECTION_WEST);
+        else if (destination.y > current.y)
+            directions.push_back(DIRECTION_SOUTH);
+        else if (destination.y < current.y)
+            directions.push_back(DIRECTION_NORTH);
+        else if (destination.z > current.z)
+            directions.push_back(DIRECTION_DOWN);
+        else if (destination.z < current.z)
+            directions.push_back(DIRECTION_UP);
+        else
+            directions.push_back(DIRECTION_LOCAL);
+    }
 
-    if (destination.x > current.x)
-        directions.push_back(DIRECTION_EAST);
-    else if (destination.x < current.x)
-        directions.push_back(DIRECTION_WEST);
-    else if (destination.y > current.y)
-        directions.push_back(DIRECTION_SOUTH);
-    else if (destination.y < current.y)
-        directions.push_back(DIRECTION_NORTH);
-    else if (destination.z > current.z)
-        directions.push_back(DIRECTION_DOWN);
-    else if (destination.z < current.z)
-        directions.push_back(DIRECTION_UP);
-    else
-        directions.push_back(DIRECTION_LOCAL);
+    //yx routing
+    if (routeData.vc_id == 1) {
+        if (destination.y > current.y)
+            directions.push_back(DIRECTION_SOUTH);
+        else if (destination.y < current.y)
+            directions.push_back(DIRECTION_NORTH);
+        else if (destination.x > current.x)
+            directions.push_back(DIRECTION_EAST);
+        else if (destination.x < current.x)
+            directions.push_back(DIRECTION_WEST);
+        else if (destination.z > current.z)
+            directions.push_back(DIRECTION_DOWN);
+        else if (destination.z < current.z)
+            directions.push_back(DIRECTION_UP);
+        else
+            directions.push_back(DIRECTION_LOCAL);
+    }
 
     return directions;
    } 
