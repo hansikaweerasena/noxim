@@ -73,6 +73,24 @@ void Router::rxProcess()
 	    if (req_rx[i].read() == 1 - current_level_rx[i])
 	    { 
 		Flit received_flit = flit_rx[i].read();
+
+		//Re-route flits if they reached the temporary destination
+		  if (received_flit.dst_id == local_id && received_flit.dst_id != received_flit.fin_id) {
+			TRACEO << "Switch dest from " << received_flit.dst_id << " to " << received_flit.fin_id << endl;
+			received_flit.dst_id = received_flit.fin_id;
+			//Flip routing algorithm if necessary
+			if (received_flit.flip_route) {
+				if (received_flit.route_xy) {
+					received_flit.route_xy = false;
+					received_flit.vc_id = 1;
+				}
+				else {
+					received_flit.route_xy = true;
+					received_flit.vc_id = 0;
+				}
+			}
+		  }
+
 		//LOG<<"request opposite to the current_level, reading flit "<<received_flit<<endl;
 
 		int vc = received_flit.vc_id;
@@ -118,183 +136,6 @@ void Router::rxProcess()
 
 void Router::txProcess()
 {
-	//Possible placement of routing algorithm using buffers?
-	if (aont_buffer.IsFull()) {
-		Flit flit = aont_buffer.front();
-		Coord src = id2Coord(flit.src_id);
-		Coord dest = id2Coord(flit.dst_id);
-		int mesh_dim_x = GlobalParams::mesh_dim_x;
-		int mesh_dim_y = GlobalParams::mesh_dim_y;
-
-		int bluex = 0;
-		int bluey = 0;
-		int redx = 0;
-		int redy = 0;
-		bool bluert;
-		bool redrt;
-		bool flipblue = false; //Flip routing algorithm on blue route (in edge case)
-		//Normal case
-		if ((src.x != dest.x) && (src.y != dest.y)) {
-			//Boundary variables
-			int bluetop = 0;
-			int bluebot = 0;
-			int bluelef = 0;
-			int bluerig = 0;
-			bool redtop = true; //True if top part of noc is red
-			bool redleft = true; //True if left part of noc is red
-			//Routing algorithms
-			//By design routing algorithms apply to all cases
-			bluert = false;
-			redrt = true;
-			//4 cases depending on where dest is with respect to src
-			if (dest.x > src.x && dest.y > src.y) {
-				bluetop = src.y + 1;
-				bluebot = mesh_dim_y - 1;
-				bluelef = 0;
-				bluerig = dest.x - 1;
-				redtop = true;
-				redleft = false;
-			}
-			else if (dest.x > src.x && dest.y < src.y) {
-				bluetop = 0;
-				bluebot = src.y - 1;
-				bluelef = 0;
-				bluerig = dest.x - 1;
-				redtop = false;
-				redleft = false;
-			}
-			else if (dest.x < src.x && dest.y > src.y) {
-				bluetop = src.y + 1;
-				bluebot = mesh_dim_y - 1;
-				bluelef = dest.x + 1;
-				bluerig = mesh_dim_x - 1;
-				redtop = true;
-				redleft = true;
-			}
-			else {
-				bluetop = 0;
-				bluebot = src.y - 1;
-				bluelef = dest.x + 1;
-				bluerig = mesh_dim_x - 1;
-				redtop = false;
-				redleft = true;
-			}
-
-			//Random number generation
-			srand(time(0));
-			//(rand() % (max_value - min_value + 1)) + min_value;
-
-			//Choose x and y coordinates for the blue node
-			bluex = (rand() % (bluerig - bluelef + 1)) + bluelef;
-			bluey = (rand() % (bluebot - bluetop + 1)) + bluetop;
-			//Choose x and y coordinates for the red node
-			//This is complex because there are two red rectangles
-			//Find area and random coord from both rectangles
-			int red1area = 0;
-			int red1x = 0;
-			int red1y = 0;
-			int red2area = 0;
-			int red2x = 0;
-			int red2y = 0;
-			if (redtop) {
-				red1area = (src.y + 1) * mesh_dim_x;
-				red1x = (rand() % (mesh_dim_x - 1 - 0 + 1)) + 0;
-				red1y = (rand() % (src.y - 0 + 1)) + 0;
-			}
-			else {
-				red1area = (mesh_dim_y - src.y) * mesh_dim_x;
-				red1x = (rand() % (mesh_dim_x - 1 - 0 + 1)) + 0;
-				red1y = (rand() % (mesh_dim_y - 1 - src.y + 1)) + 0;
-			}
-			if (redleft) {
-				red2area = (dest.x + 1) * (bluebot - bluetop);
-				red2x = (rand() % (dest.x - 0 + 1)) + 0;
-				red2y = (rand() % (bluebot - bluetop + 1)) + bluetop;
-			}
-			else {
-				red2area = (mesh_dim_x - dest.x) * (bluebot - bluetop);
-				red2x = (rand() % (mesh_dim_x - 1 - dest.x + 1)) + dest.x;
-				red2y = (rand() % (bluebot - bluetop + 1)) + bluetop;
-			}
-			//Randomly pick which rectangle to pick from
-			int chosen = (rand() % ((red1area + red2area) - 1 + 1)) + 1;
-			if (chosen <= red1area) {
-				redx = red1x;
-				redy = red1y;
-			}
-			else {
-				redx = red2x;
-				redy = red2y;
-			}
-		}
-		//Src and dest lined up case
-		else {
-			//Horizontal line
-			if (src.y == dest.y) {
-				//Rare case: both on bottom edge, flip sides
-				if (src.y == mesh_dim_y - 1) {
-					redx = (random int between 0 and mesh_dim_x - 1, inclusive);
-					redy = src.y;
-					bluex = (random int between 0 and mesh_dim_x - 1, inclusive);
-					bluey = (random int between 0 and src.y - 1, inclusive);
-				}
-				else {
-					redx = (random int between 0 and mesh_dim_x - 1, inclusive);
-					redy = (random int between 0 and src.y, inclusive);
-					bluex = (random int between 0 and mesh_dim_x - 1, inclusive);
-					bluey = (random int between src.y + 1 and mesh_dim_y - 1, inclusive);
-				}
-				bluert = false;
-				redrt = false;
-			}
-			//Vertical line
-			else {
-				//Rare case: both on right edge, flip sides
-				if (src.x == mesh_dim_x - 1) {
-					redy = (random int between 0 and mesh_dim_y - 1, inclusive);
-					redx = src.x;
-					bluey = (random int between 0 and mesh_dim_y - 1, inclusive);
-					bluex = (random int between 0 and src.x - 1, inclusive);
-				}
-				else {
-					redy = (random int between 0 and mesh_dim_y - 1, inclusive);
-					redx = (random int between 0 and src.x, inclusive);
-					bluey = (random int between 0 and mesh_dim_y - 1, inclusive);
-					bluex = (random int between src.x + 1 and mesh_dim_x - 1, inclusive);
-				}
-				bluert = true;
-				redrt = true;
-			}
-			flipblue = true; //Must flip for lined up case
-		}
-		Flit red_flit;
-		Flit blue_flit;
-		int red_target = (redy * GlobalParams::mesh_dim_x) + redx;
-		int blue_target = (bluey * GlobalParams::mesh_dim_x) + bluex;
-		//Set original dests to final dest
-		red_flit.fin_id = red_flit.dst_id;
-		blue_flit.fin_id = blue_flit.dst_id;
-		//Set temp dests
-		red_flit.dst_id = red_target;
-		blue_flit.dst_id = blue_target;
-		//Set routing
-		red_flit.route_xy = redrt;
-		blue_flit.route_xy = bluert;
-		//Set vc_id
-		if (redrt)
-			red_flit.vc_id = 0;
-		else
-			red_flit.vc_id = 1;
-		if (bluert)
-			blue_flit.vc_id = 0;
-		else
-			blue_flit.vc_id = 1;
-		//Set flip
-		if (flipblue)
-			blue_flit.flip_route = true;
-	}
-
-
   if (reset.read()) 
     {
       // Clear outputs and indexes of transmitting protocol
@@ -324,21 +165,6 @@ void Router::txProcess()
 		  Flit flit = buffer[i][vc].Front();
 		  power.bufferRouterFront();
 
-		  //Re-route flits if they reached the temporary destination
-		  if (flit.dst_id == local_id && flit.dst_id != flit.fin_id) {
-			flit.dst_id == flit.fin_id;
-			//Flip routing algorithm if necessary
-			if (flit.flip_route) {
-				if (flit.route_xy) {
-					flit.route_xy = false;
-					flit.vc_id = 1;
-				}
-				else {
-					flit.route_xy = true;
-					flit.vc_id = 0;
-				}
-			}
-		  }
 
 		  if (flit.flit_type == FLIT_TYPE_HEAD) 
 		    {
@@ -470,7 +296,7 @@ void Router::txProcess()
 		      if (o == DIRECTION_LOCAL) 
 		      {
 			  power.networkInterface();
-			  LOG << "Consumed flit " << flit << endl;
+			  TRACEO << "Consumed flit " << flit << endl;
 			  stats.receivedFlit(sc_time_stamp().to_double() / GlobalParams::clock_period_ps, flit);
 			  if (GlobalParams:: max_volume_to_be_drained) 
 			  {

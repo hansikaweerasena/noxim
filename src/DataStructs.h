@@ -47,6 +47,9 @@ struct Payload {
 struct Packet {
     int src_id;
     int dst_id;
+    int fin_id; //Enables temp destinations
+    bool route_xy; //Routing algorithm: true for xy, false for yx
+    bool flip_route = false; //Flip routing algorithm when reaches temp destination
     int vc_id;
     double timestamp;		// SC timestamp at packet generation
     int size;
