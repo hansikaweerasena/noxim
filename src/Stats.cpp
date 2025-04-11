@@ -38,8 +38,17 @@ void Stats::receivedFlit(const double arrival_time,
 	i = chist.size() - 1;
     }
 
-    if (flit.flit_type == FLIT_TYPE_HEAD)
-	chist[i].delays.push_back(arrival_time - flit.timestamp);
+    if (flit.flit_type == FLIT_TYPE_HEAD) {
+		if (chist[i].header_recv) {
+			//Second packet recieved from src, record delay
+			int inverse_AONT_delay = 70;
+			chist[i].delays.push_back((arrival_time - flit.timestamp) + inverse_AONT_delay);
+			chist[i].header_recv = false;
+		}
+		else {
+			chist[i].header_recv = true;
+		}
+	}
 
     chist[i].total_received_flits++;
     chist[i].last_received_flit_time = arrival_time - warm_up_time;

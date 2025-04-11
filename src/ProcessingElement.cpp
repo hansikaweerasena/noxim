@@ -113,12 +113,10 @@ void ProcessingElement::txProcess()
 	transmittedAtPreviousCycle = false;
     } else {
     //Double packet generation with AONT 
-	Packet packet1;
-    Packet packet2;
+	Packet packet;
 
-	if (canShot(packet1, packet2)) {
-	    packet_queue.push(packet1);
-        packet_queue.push(packet2);
+	if (canShot(packet)) {
+	    packet_queue.push(packet);
 	    transmittedAtPreviousCycle = true;
 	} else
 	    transmittedAtPreviousCycle = false;
@@ -172,7 +170,7 @@ Flit ProcessingElement::nextFlit()
     return flit;
 }
 
-bool ProcessingElement::canShot(Packet & red_packet, Packet & blue_packet)
+bool ProcessingElement::canShot(Packet & packet)
 {
    // assert(false);
 
@@ -209,27 +207,42 @@ bool ProcessingElement::canShot(Packet & red_packet, Packet & blue_packet)
 	shot = (((double) rand()) / RAND_MAX < threshold);
 	if (shot) {
 	    if (GlobalParams::traffic_distribution == TRAFFIC_RANDOM)
-		    red_packet = trafficRandom();
+		    packet = trafficRandom();
         else if (GlobalParams::traffic_distribution == TRAFFIC_TRANSPOSE1)
-		    red_packet = trafficTranspose1();
+		    packet = trafficTranspose1();
         else if (GlobalParams::traffic_distribution == TRAFFIC_TRANSPOSE2)
-    		red_packet = trafficTranspose2();
+    		packet = trafficTranspose2();
         else if (GlobalParams::traffic_distribution == TRAFFIC_BIT_REVERSAL)
-		    red_packet = trafficBitReversal();
+		    packet = trafficBitReversal();
         else if (GlobalParams::traffic_distribution == TRAFFIC_SHUFFLE)
-		    red_packet = trafficShuffle();
+		    packet = trafficShuffle();
         else if (GlobalParams::traffic_distribution == TRAFFIC_BUTTERFLY)
-		    red_packet = trafficButterfly();
+		    packet = trafficButterfly();
         else if (GlobalParams::traffic_distribution == TRAFFIC_LOCAL)
-		    red_packet = trafficLocal();
+		    packet = trafficLocal();
         else if (GlobalParams::traffic_distribution == TRAFFIC_ULOCAL)
-		    red_packet = trafficULocal();
+		    packet = trafficULocal();
         else {
             cout << "Invalid traffic distribution: " << GlobalParams::traffic_distribution << endl;
             exit(-1);
         }
 	}
     } else if (GlobalParams::traffic_distribution == TRAFFIC_TABLE_BASED) {			// Table based communication traffic
+        
+        //Inject packets finished with AONT
+        if(!future_packets.empty()){
+            FuturePacket future_packet = future_packets.front();
+            if (future_packet.injection_cycle <= now) {
+                packet = future_packet.packet;
+                future_packets.pop();
+                shot = true;
+            }else{
+                shot = false;
+            }
+        }else{
+            shot = false;
+        }
+
         if (never_transmit)
             return false;
 
@@ -239,8 +252,8 @@ bool ProcessingElement::canShot(Packet & red_packet, Packet & blue_packet)
             traffic_table->getCumulativePirPor(local_id, (int) now, use_pir, dst_prob);
 
         double prob = (double) rand() / RAND_MAX;
-        shot = (prob < threshold);
-        if (shot) {
+        bool generate = (prob < threshold);
+        if (generate) {
             for (unsigned int i = 0; i < dst_prob.size(); i++) {
             if (prob < dst_prob[i].second) {
 
@@ -390,7 +403,12 @@ bool ProcessingElement::canShot(Packet & red_packet, Packet & blue_packet)
                 //Calculate targets 
                 int red_target = (redy * GlobalParams::mesh_dim_x) + redx;
                 int blue_target = (bluey * GlobalParams::mesh_dim_x) + bluex;
+                //Set AONT delay and routing delay
+                int AONT_delay = 70;
+                int route_delay = 10;
                 //Set packet information
+                Packet red_packet;
+                Packet blue_packet;
                 red_packet.make(local_id, red_target, rvc, now, total_size / 2);
                 blue_packet.make(local_id, blue_target, bvc, now, total_size / 2);
                 red_packet.fin_id = dst_prob[i].first;
@@ -401,6 +419,16 @@ bool ProcessingElement::canShot(Packet & red_packet, Packet & blue_packet)
                     blue_packet.flip_route = true;
                 red_packet.trace_id = -1;
                 blue_packet.trace_id = -1;
+                //Set for injection based on AONT delay
+                FuturePacket future_red;
+                FuturePacket future_blue;
+                future_red.packet = red_packet;
+                future_blue.packet = blue_packet;
+                future_red.injection_cycle = now + AONT_delay + route_delay;
+                future_blue.injection_cycle = now + AONT_delay + route_delay;
+                future_packets.push(future_red);
+                future_packets.push(future_blue);
+                TRACEO << "Red and blue packets generated at " << now << endl;
                 break;
             }
             }
@@ -409,8 +437,8 @@ bool ProcessingElement::canShot(Packet & red_packet, Packet & blue_packet)
         if(!future_packets.empty()){
             FuturePacket future_packet = future_packets.front();
             if (future_packet.injection_cycle <= now) {
-                red_packet = future_packet.packet;
-                red_packet.timestamp = now;
+                packet = future_packet.packet;
+                packet.timestamp = now;
                 future_packets.pop();
                 shot = true;
             }else{
@@ -423,8 +451,8 @@ bool ProcessingElement::canShot(Packet & red_packet, Packet & blue_packet)
         if(!future_packets.empty()){
             FuturePacket future_packet = future_packets.front();
             if (future_packet.injection_cycle <= now) {
-                red_packet = future_packet.packet;
-                red_packet.timestamp = now;
+                packet = future_packet.packet;
+                packet.timestamp = now;
                 future_packets.pop();
                 shot = true;
             }else{
@@ -449,9 +477,9 @@ bool ProcessingElement::canShot(Packet & red_packet, Packet & blue_packet)
                 for (unsigned int i = 0; i < dst_prob.size(); i++) {
                     if (prob < dst_prob[i].second) {
                         int vc = randInt(0,GlobalParams::n_virtual_channels-1);
-                        red_packet.make(local_id, dst_prob[i].first, vc, now, 2);   // All the table based packet are control packet with size 2
-                        red_packet.trace_id = -1;
-                        red_packet.payload_type = DOS;
+                        packet.make(local_id, dst_prob[i].first, vc, now, 2);   // All the table based packet are control packet with size 2
+                        packet.trace_id = -1;
+                        packet.payload_type = DOS;
                         break;
                     }
                 }
