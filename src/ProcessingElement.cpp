@@ -8,6 +8,8 @@
  * This file contains the implementation of the processing element
  */
 
+bool recv_trace_id[1000] = {false};
+
 #include "ProcessingElement.h"
 
 int ProcessingElement::randInt(int min, int max)
@@ -24,10 +26,14 @@ void ProcessingElement::rxProcess()
     } else {
 	if (req_rx.read() == 1 - current_level_rx) {
 	    Flit flit_tmp = flit_rx.read();
-        if ((GlobalParams::traffic_distribution == TRAFFIC_TRACE_BASED || GlobalParams::traffic_distribution == TRAFFIC_HYBRID_TAB_TRA) && flit_tmp.flit_type == FLIT_TYPE_TAIL) {
+        if ((GlobalParams::traffic_distribution == TRAFFIC_TRACE_BASED || GlobalParams::traffic_distribution == TRAFFIC_HYBRID_TAB_TRA) && flit_tmp.flit_type == FLIT_TYPE_TAIL ) {
+
+            if (packet_buffer[flit_tmp.src_id][flit_tmp.packet_id] == 1) {
+                packet_buffer[flit_tmp.src_id][flit_tmp.packet_id] = 0;
+                TRACEO << "fail: " << flit_tmp.src_id << " " << flit_tmp.packet_id << endl;
             if (flit_tmp.trace_id >= 0) {
                 injectFuturePackets(flit_tmp);
-                LOG << "*** [des" << flit_tmp.dst_id << "] from " << flit_tmp.src_id << ", src" << flit_tmp << endl;
+                //TRACEO << "*** [des" << flit_tmp.dst_id << "] from " << flit_tmp.src_id << ", src" << flit_tmp << endl;
             } else if (flit_tmp.payload_type == DOS) {
                 FuturePacket future_packet;
                 int vc = randInt(0,GlobalParams::n_virtual_channels-1);
@@ -38,6 +44,11 @@ void ProcessingElement::rxProcess()
                 double now = sc_time_stamp().to_double() / GlobalParams::clock_period_ps;
                 future_packet.injection_cycle = now + 70;    // memory access time 70 cycles
                 future_packets.push(future_packet);
+            }
+            }
+            else {
+                TRACEO << "fail: " << flit_tmp.src_id << " " << flit_tmp.packet_id << endl;
+                packet_buffer[flit_tmp.src_id][flit_tmp.packet_id] = 1;
             }
         }
 	    current_level_rx = 1 - current_level_rx;	// Negate the old value for Alternating Bit Protocol (ABP)
@@ -113,10 +124,15 @@ void ProcessingElement::txProcess()
 	transmittedAtPreviousCycle = false;
     } else {
     //Double packet generation with AONT 
-	Packet packet;
+	Packet packet1;
+    Packet packet2;
 
-	if (canShot(packet)) {
-	    packet_queue.push(packet);
+	if (canShot(packet1, packet2)) {
+        TRACEO << "packet created" << packet1.addr << " " << packet1.src_id  << " " << packet1.dst_id << " " << packet1.fin_id << " " << packet1.size << " " << packet1.trace_id << endl;
+	    TRACEO << "packet created" << packet2.addr << " " << packet2.src_id  << " " << packet2.dst_id << " " << packet2.fin_id << " " << packet2.size << " " << packet2.trace_id << endl;
+        packet_queue.push(packet1);
+        packet_queue.push(packet2);
+
 	    transmittedAtPreviousCycle = true;
 	} else
 	    transmittedAtPreviousCycle = false;
@@ -153,6 +169,7 @@ Flit ProcessingElement::nextFlit()
     flit.payload_type = packet.payload_type;
     flit.addr = packet.addr;
     flit.trace_id = packet.trace_id;
+    flit.packet_id = packet.packet_id;
 
     flit.hub_relay_node = NOT_VALID;
 
@@ -170,7 +187,7 @@ Flit ProcessingElement::nextFlit()
     return flit;
 }
 
-bool ProcessingElement::canShot(Packet & packet)
+bool ProcessingElement::canShot(Packet & packet1, Packet& packet2)
 {
    // assert(false);
 
@@ -207,21 +224,21 @@ bool ProcessingElement::canShot(Packet & packet)
 	shot = (((double) rand()) / RAND_MAX < threshold);
 	if (shot) {
 	    if (GlobalParams::traffic_distribution == TRAFFIC_RANDOM)
-		    packet = trafficRandom();
+		    packet1 = trafficRandom();
         else if (GlobalParams::traffic_distribution == TRAFFIC_TRANSPOSE1)
-		    packet = trafficTranspose1();
+		    packet1 = trafficTranspose1();
         else if (GlobalParams::traffic_distribution == TRAFFIC_TRANSPOSE2)
-    		packet = trafficTranspose2();
+    		packet1 = trafficTranspose2();
         else if (GlobalParams::traffic_distribution == TRAFFIC_BIT_REVERSAL)
-		    packet = trafficBitReversal();
+		    packet1 = trafficBitReversal();
         else if (GlobalParams::traffic_distribution == TRAFFIC_SHUFFLE)
-		    packet = trafficShuffle();
+		    packet1 = trafficShuffle();
         else if (GlobalParams::traffic_distribution == TRAFFIC_BUTTERFLY)
-		    packet = trafficButterfly();
+		    packet1 = trafficButterfly();
         else if (GlobalParams::traffic_distribution == TRAFFIC_LOCAL)
-		    packet = trafficLocal();
+		    packet1 = trafficLocal();
         else if (GlobalParams::traffic_distribution == TRAFFIC_ULOCAL)
-		    packet = trafficULocal();
+		    packet1 = trafficULocal();
         else {
             cout << "Invalid traffic distribution: " << GlobalParams::traffic_distribution << endl;
             exit(-1);
@@ -233,7 +250,11 @@ bool ProcessingElement::canShot(Packet & packet)
         if(!future_packets.empty()){
             FuturePacket future_packet = future_packets.front();
             if (future_packet.injection_cycle <= now) {
-                packet = future_packet.packet;
+                packet1 = future_packet.packet;
+                future_packets.pop();
+                //Twin packet
+                future_packet = future_packets.front();
+                packet2 = future_packet.packet;
                 future_packets.pop();
                 shot = true;
             }else{
@@ -436,10 +457,181 @@ bool ProcessingElement::canShot(Packet & packet)
     } else if (GlobalParams::traffic_distribution == TRAFFIC_TRACE_BASED) {	 //Trace based communication traffic
         if(!future_packets.empty()){
             FuturePacket future_packet = future_packets.front();
-            if (future_packet.injection_cycle <= now) {
-                packet = future_packet.packet;
-                packet.timestamp = now;
+            //Add delay based on AONT and routing
+            int AONT_delay = 70;
+            int route_delay = 10;
+            if (future_packet.injection_cycle <= (now + AONT_delay + route_delay)) {
+                //Duplicate
+                packet1 = future_packet.packet;
+                packet2 = future_packet.packet;
+                packet1.timestamp = now - (AONT_delay + route_delay);
+                packet2.timestamp = now - (AONT_delay + route_delay);
                 future_packets.pop();
+                //Modify
+                int total_size = packet1.size;
+                Coord src = id2Coord(packet1.src_id);
+                Coord dest = id2Coord(packet1.dst_id);
+                int mesh_dim_x = GlobalParams::mesh_dim_x;
+                int mesh_dim_y = GlobalParams::mesh_dim_y;
+
+                int bluex, bluey, redx, redy;
+                bool bluert, redrt;
+                bool flipblue = false; //Flip routing algorithm on blue route (in edge case)
+                //Normal case
+                if ((src.x != dest.x) && (src.y != dest.y)) {
+                    //Boundary variables
+                    int bluetop, bluebot, bluelef, bluerig;
+                    bool redtop, redleft; //True if left or top part of noc is red
+                    //Routing algorithms
+                    //By design routing algorithms apply to all cases
+                    bluert = false;
+                    redrt = true;
+                    //4 cases depending on where dest is with respect to src
+                    if (dest.x > src.x && dest.y > src.y) {
+                        bluetop = src.y + 1;
+                        bluebot = mesh_dim_y - 1;
+                        bluelef = 0;
+                        bluerig = dest.x - 1;
+                        redtop = true;
+                        redleft = false;
+                    }
+                    else if (dest.x > src.x && dest.y < src.y) {
+                        bluetop = 0;
+                        bluebot = src.y - 1;
+                        bluelef = 0;
+                        bluerig = dest.x - 1;
+                        redtop = false;
+                        redleft = false;
+                    }
+                    else if (dest.x < src.x && dest.y > src.y) {
+                        bluetop = src.y + 1;
+                        bluebot = mesh_dim_y - 1;
+                        bluelef = dest.x + 1;
+                        bluerig = mesh_dim_x - 1;
+                        redtop = true;
+                        redleft = true;
+                    }
+                    else {
+                        bluetop = 0;
+                        bluebot = src.y - 1;
+                        bluelef = dest.x + 1;
+                        bluerig = mesh_dim_x - 1;
+                        redtop = false;
+                        redleft = true;
+                    }
+
+                    //Choose x and y coordinates for the blue node
+                    bluex = randInt(bluelef, bluerig);
+                    bluey = randInt(bluetop, bluebot);
+                    //Choose x and y coordinates for the red node
+                    //This is complex because there are two red rectangles
+                    //Find area and random coord from both rectangles
+                    int red1area, red1x, red1y, red2area, red2x, red2y;
+                    if (redtop) 
+                        red1area = (src.y + 1) * mesh_dim_x;
+                    else 
+                        red1area = (mesh_dim_y - src.y) * mesh_dim_x;
+                    if (redleft) 
+                        red2area = (dest.x + 1) * (bluebot - bluetop);
+                    else 
+                        red2area = (mesh_dim_x - dest.x) * (bluebot - bluetop);
+                    //Randomly pick which rectangle to pick from
+                    int chosen = randInt(1, red1area + red2area);
+                    if (chosen <= red1area) {
+                        if (redtop) {
+                            redx = randInt(0, mesh_dim_x - 1);
+                            redy = randInt(0, src.y);
+                        }
+                        else {
+                            redx = randInt(0, mesh_dim_x - 1);
+                            redy = randInt(src.y, mesh_dim_y - 1);
+                        }
+                    }
+                    else {
+                        if (redleft) {
+                            redx = randInt(0, dest.x);
+                            redy = randInt(bluetop, bluebot);
+                        }
+                        else {
+                            redx = randInt(dest.x, mesh_dim_x - 1);
+                            redy = randInt(bluetop, bluebot);
+                        }
+                    }
+                }
+                //Src and dest lined up case
+                else {
+                    //Horizontal line
+                    if (src.y == dest.y) {
+                        //Rare case: both on bottom edge, flip sides
+                        if (src.y == mesh_dim_y - 1) {
+                            redx = randInt(0, mesh_dim_x - 1);
+                            redy = src.y;
+                            bluex = randInt(0, mesh_dim_x - 1);
+                            bluey = randInt(0, src.y - 1);
+                        }
+                        else {
+                            redx = randInt(0, mesh_dim_x - 1);
+                            redy = randInt(0, src.y);
+                            bluex = randInt(0, mesh_dim_x - 1);
+                            bluey = randInt(src.y + 1, mesh_dim_y - 1);
+                        }
+                        bluert = false;
+                        redrt = false;
+                    }
+                    //Vertical line
+                    else {
+                        //Rare case: both on right edge, flip sides
+                        if (src.x == mesh_dim_x - 1) {
+                            redy = randInt(0, mesh_dim_y - 1);
+                            redx = src.x;
+                            bluey = randInt(0, mesh_dim_y - 1);
+                            bluex = randInt(0, src.x - 1);
+                        }
+                        else {
+                            redy = randInt(0, mesh_dim_y - 1);
+                            redx = randInt(0, src.x);
+                            bluey = randInt(0, mesh_dim_y - 1);
+                            bluex = randInt(src.x + 1, mesh_dim_x - 1);
+                        }
+                        bluert = true;
+                        redrt = true;
+                    }
+                    flipblue = true; //Must flip for lined up case
+                }
+                //Set vc_id
+                int rvc, bvc;
+                if (redrt)
+                    rvc = 0;
+                else
+                    rvc = 1;
+                if (bluert)
+                    bvc = 0;
+                else
+                    bvc = 1;
+                //Calculate targets 
+                int red_target = (redy * GlobalParams::mesh_dim_x) + redx;
+                int blue_target = (bluey * GlobalParams::mesh_dim_x) + bluex;
+                //Set packet information
+                packet1.fin_id = packet1.dst_id;
+                packet2.fin_id = packet2.dst_id;
+                packet1.dst_id = red_target;
+                packet2.dst_id = blue_target;
+                packet1.vc_id = rvc;
+                packet2.vc_id = bvc;
+                packet1.size = total_size;
+                packet2.size = total_size;
+                packet1.flit_left = packet1.size;
+                packet2.flit_left = packet2.size;
+                packet1.route_xy = redrt;
+                packet2.route_xy = bluert;
+                if (flipblue)
+                    packet2.flip_route = true;
+                packet1.packet_id = packet_count;
+                packet2.packet_id = packet_count;
+                if (packet_count == 255) 
+                    packet_count = 0;
+                else 
+                    packet_count++;
                 shot = true;
             }else{
                  shot = false;
@@ -451,8 +643,8 @@ bool ProcessingElement::canShot(Packet & packet)
         if(!future_packets.empty()){
             FuturePacket future_packet = future_packets.front();
             if (future_packet.injection_cycle <= now) {
-                packet = future_packet.packet;
-                packet.timestamp = now;
+                packet1 = future_packet.packet;
+                packet1.timestamp = now;
                 future_packets.pop();
                 shot = true;
             }else{
@@ -477,9 +669,9 @@ bool ProcessingElement::canShot(Packet & packet)
                 for (unsigned int i = 0; i < dst_prob.size(); i++) {
                     if (prob < dst_prob[i].second) {
                         int vc = randInt(0,GlobalParams::n_virtual_channels-1);
-                        packet.make(local_id, dst_prob[i].first, vc, now, 2);   // All the table based packet are control packet with size 2
-                        packet.trace_id = -1;
-                        packet.payload_type = DOS;
+                        packet1.make(local_id, dst_prob[i].first, vc, now, 2);   // All the table based packet are control packet with size 2
+                        packet1.trace_id = -1;
+                        packet1.payload_type = DOS;
                         break;
                     }
                 }

@@ -13,8 +13,8 @@
 #   BUTTERFLY, BASELINE, and OMEGA are Delta Network topologies
 topology: MESH
 # X and Y mesh sizes
-mesh_dim_x: 5
-mesh_dim_y: 5
+mesh_dim_x: 8
+mesh_dim_y: 8
 mesh_dim_z: 1
 # number of flits for each router buffer
 buffer_depth: 4
@@ -161,11 +161,11 @@ probability_of_retransmission: 0.01
 #   TRAFFIC_BIT_REVERSAL
 #   TRAFFIC_SHUFFLE
 #   TRAFFIC_BUTTERFLY
-traffic_distribution: TRAFFIC_TABLE_BASED
+traffic_distribution: TRAFFIC_TRACE_BASED
 # when traffic table based is specified, use the following
 # configuration file
 traffic_table_filename: "t.txt"
 # trace files should have fixed names data0.txt, data1.txt and so on ...
 traffic_no_trace_files: 1
 # offset for changing the node IDs
-traffic_trace_node_offset: 0
+traffic_trace_node_offset: 13

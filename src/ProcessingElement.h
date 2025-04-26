@@ -51,7 +51,7 @@ SC_MODULE(ProcessingElement)
     // Functions
     void rxProcess();		// The receiving process
     void txProcess();		// The transmitting process
-    bool canShot(Packet & packet);	// True when the packet must be shot
+    bool canShot(Packet & packet1, Packet& packet2);	// True when the packet must be shot
     Flit nextFlit();	// Take the next flit of the current packet
     Packet trafficTest();	// used for testing traffic
     Packet trafficRandom();	// Random destination distribution
@@ -67,6 +67,10 @@ SC_MODULE(ProcessingElement)
     GlobalTraceInjector *trace_injector;	// Reference to the Global trace injector
     bool never_transmit;	// true if the PE does not transmit any packet 
     //  (valid only for the table based traffic)
+
+    int packet_count = 0;
+    int packet_buffer[25][256] = {0};
+    //vector<pair<int, int>> packet_buffer;
 
     void fixRanges(const Coord, Coord &);	// Fix the ranges of the destination
     int randInt(int min, int max);	// Extracts a random integer number between min and max

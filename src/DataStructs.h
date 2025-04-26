@@ -58,6 +58,7 @@ struct Packet {
     PayloadType payload_type = OTHER;
     int trace_id;
     int addr;
+    int packet_id;
 
     // Constructors
     Packet() { }
@@ -156,6 +157,7 @@ struct Flit {
     PayloadType payload_type = OTHER;
     int trace_id;
     int addr;
+    int packet_id;
 
     int hub_relay_node;
 
