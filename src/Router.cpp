@@ -76,7 +76,7 @@ void Router::rxProcess()
 
 		//Re-route flits if they reached the temporary destination
 		  if (received_flit.dst_id == local_id && received_flit.dst_id != received_flit.fin_id) {
-			TRACEO << "Switch dest from " << received_flit.dst_id << " to " << received_flit.fin_id << endl;
+			//TRACEO << "Switch dest from " << received_flit.dst_id << " to " << received_flit.fin_id << endl;
 			received_flit.dst_id = received_flit.fin_id;
 			//Flip routing algorithm if necessary
 			if (received_flit.flip_route) {
@@ -102,7 +102,7 @@ void Router::rxProcess()
 		    buffer[i][vc].Push(received_flit);
 		    LOG << " Flit " << received_flit << " collected from Input[" << i << "][" << vc <<"]" << endl;
 
-            TRACEO << "Incoming Flit -> R_id: " << local_id << " , in_port: " << i << ", in_vc: " << vc << " flit src: " << received_flit.src_id << " flit dst: " << received_flit.dst_id << " type: " << received_flit.flit_type << endl;
+            //TRACEO << "Incoming Flit -> R_id: " << local_id << " , in_port: " << i << ", in_vc: " << vc << " flit src: " << received_flit.src_id << " flit dst: " << received_flit.dst_id << " type: " << received_flit.flit_type << endl;
 
 		    power.bufferRouterPush();
 
@@ -270,7 +270,7 @@ void Router::txProcess()
 		      //if (GlobalParams::verbose_mode > VERBOSE_OFF) 
 		      LOG << "Input[" << i << "][" << vc << "] forwarded to Output[" << o << "], flit: " << flit << endl;
 
-              TRACEO << "Outgoing Flit -> R_id: " << local_id << " , in_port: " << i << ", out_port: " << o << " flit src: " << flit.src_id << " flit dst: " << flit.dst_id <<  " type: " << flit.flit_type << endl;
+              //TRACEO << "Outgoing Flit -> R_id: " << local_id << " , in_port: " << i << ", out_port: " << o << " flit src: " << flit.src_id << " flit dst: " << flit.dst_id <<  " type: " << flit.flit_type << endl;
 
 		      flit_tx[o].write(flit);
 		      current_level_tx[o] = 1 - current_level_tx[o];
@@ -296,7 +296,7 @@ void Router::txProcess()
 		      if (o == DIRECTION_LOCAL) 
 		      {
 			  power.networkInterface();
-			  TRACEO << "Consumed flit " << flit << endl;
+			  //TRACEO << "Consumed flit " << flit << endl;
 			  stats.receivedFlit(sc_time_stamp().to_double() / GlobalParams::clock_period_ps, flit);
 			  if (GlobalParams:: max_volume_to_be_drained) 
 			  {

@@ -30,7 +30,7 @@ void ProcessingElement::rxProcess()
 
             if (packet_buffer[flit_tmp.src_id][flit_tmp.packet_id] == 1) {
                 packet_buffer[flit_tmp.src_id][flit_tmp.packet_id] = 0;
-                TRACEO << "fail: " << flit_tmp.src_id << " " << flit_tmp.packet_id << endl;
+                //TRACEO << "fail: " << flit_tmp.src_id << " " << flit_tmp.packet_id << endl;
             if (flit_tmp.trace_id >= 0) {
                 injectFuturePackets(flit_tmp);
                 //TRACEO << "*** [des" << flit_tmp.dst_id << "] from " << flit_tmp.src_id << ", src" << flit_tmp << endl;
@@ -47,7 +47,7 @@ void ProcessingElement::rxProcess()
             }
             }
             else {
-                TRACEO << "fail: " << flit_tmp.src_id << " " << flit_tmp.packet_id << endl;
+                //TRACEO << "fail: " << flit_tmp.src_id << " " << flit_tmp.packet_id << endl;
                 packet_buffer[flit_tmp.src_id][flit_tmp.packet_id] = 1;
             }
         }
@@ -128,8 +128,8 @@ void ProcessingElement::txProcess()
     Packet packet2;
 
 	if (canShot(packet1, packet2)) {
-        TRACEO << "packet created" << packet1.addr << " " << packet1.src_id  << " " << packet1.dst_id << " " << packet1.fin_id << " " << packet1.size << " " << packet1.trace_id << endl;
-	    TRACEO << "packet created" << packet2.addr << " " << packet2.src_id  << " " << packet2.dst_id << " " << packet2.fin_id << " " << packet2.size << " " << packet2.trace_id << endl;
+        //TRACEO << "packet created" << packet1.addr << " " << packet1.src_id  << " " << packet1.dst_id << " " << packet1.fin_id << " " << packet1.size << " " << packet1.trace_id << endl;
+	    //TRACEO << "packet created" << packet2.addr << " " << packet2.src_id  << " " << packet2.dst_id << " " << packet2.fin_id << " " << packet2.size << " " << packet2.trace_id << endl;
         packet_queue.push(packet1);
         packet_queue.push(packet2);
 
@@ -449,7 +449,7 @@ bool ProcessingElement::canShot(Packet & packet1, Packet& packet2)
                 future_blue.injection_cycle = now + AONT_delay + route_delay;
                 future_packets.push(future_red);
                 future_packets.push(future_blue);
-                TRACEO << "Red and blue packets generated at " << now << endl;
+                //TRACEO << "Red and blue packets generated at " << now << endl;
                 break;
             }
             }
@@ -458,8 +458,8 @@ bool ProcessingElement::canShot(Packet & packet1, Packet& packet2)
         if(!future_packets.empty()){
             FuturePacket future_packet = future_packets.front();
             //Add delay based on AONT and routing
-            int AONT_delay = 70;
-            int route_delay = 10;
+            int AONT_delay = future_packet.packet.size * 4;
+            int route_delay = 7;
             if (future_packet.injection_cycle <= (now + AONT_delay + route_delay)) {
                 //Duplicate
                 packet1 = future_packet.packet;
@@ -618,8 +618,18 @@ bool ProcessingElement::canShot(Packet & packet1, Packet& packet2)
                 packet2.dst_id = blue_target;
                 packet1.vc_id = rvc;
                 packet2.vc_id = bvc;
-                packet1.size = total_size;
-                packet2.size = total_size;
+                if (total_size < 4) {
+                    packet1.size = total_size;
+                    packet2.size = total_size;
+                }
+                else if (total_size == 5) {
+                    packet1.size = 2;
+                    packet2.size = 3;
+                }
+                else {
+                    packet1.size = total_size / 2;
+                    packet2.size = total_size / 2;
+                }
                 packet1.flit_left = packet1.size;
                 packet2.flit_left = packet2.size;
                 packet1.route_xy = redrt;
