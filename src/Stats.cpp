@@ -38,8 +38,13 @@ void Stats::receivedFlit(const double arrival_time,
 	i = chist.size() - 1;
     }
 
-    if (flit.flit_type == FLIT_TYPE_HEAD)
-	chist[i].delays.push_back(arrival_time - flit.timestamp);
+    if (flit.flit_type == FLIT_TYPE_HEAD) {
+		int AES_delay = 0;
+		if (flit.sequence_length > 2) {
+			AES_delay = flit.sequence_length * 4 * 15 * 2;
+		}
+		chist[i].delays.push_back((arrival_time - flit.timestamp) + AES_delay);
+	}
 
     chist[i].total_received_flits++;
     chist[i].last_received_flit_time = arrival_time - warm_up_time;
