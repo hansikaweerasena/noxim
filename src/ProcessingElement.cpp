@@ -460,6 +460,10 @@ bool ProcessingElement::canShot(Packet & packet1, Packet& packet2)
             //Add delay based on AONT and routing
             int AONT_delay = future_packet.packet.size * 4;
             int route_delay = 7;
+            if (future_packet.packet.size < 3) {
+                AONT_delay = 0;
+                route_delay = 0;
+            }
             if (future_packet.injection_cycle <= (now + AONT_delay + route_delay)) {
                 //Duplicate
                 packet1 = future_packet.packet;
@@ -614,8 +618,10 @@ bool ProcessingElement::canShot(Packet & packet1, Packet& packet2)
                 //Set packet information
                 packet1.fin_id = packet1.dst_id;
                 packet2.fin_id = packet2.dst_id;
-                packet1.dst_id = red_target;
-                packet2.dst_id = blue_target;
+                if (total_size > 3) { 
+                    packet1.dst_id = red_target;
+                    packet2.dst_id = blue_target;
+                }
                 packet1.vc_id = rvc;
                 packet2.vc_id = bvc;
                 if (total_size < 4) {

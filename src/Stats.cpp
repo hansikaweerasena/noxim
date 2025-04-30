@@ -42,6 +42,9 @@ void Stats::receivedFlit(const double arrival_time,
 		if (chist[i].header_recv) {
 			//Second packet recieved from src, record delay
 			int inverse_AONT_delay = flit.sequence_length * 4;
+			if (flit.sequence_length < 3) {
+				inverse_AONT_delay = 0;
+			}
 			chist[i].delays.push_back((arrival_time - flit.timestamp) + inverse_AONT_delay);
 			chist[i].header_recv = false;
 		}

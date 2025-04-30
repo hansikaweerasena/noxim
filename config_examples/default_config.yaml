@@ -120,7 +120,7 @@ clock_period_ps: 1000
 # duration of reset signal assertion, expressed in cycles
 reset_time: 1000
 # overal simulation lenght, expressed in cycles
-simulation_time: 2000
+simulation_time: 100000
 # collect stats after a given number of cycles
 stats_warm_up_time: 1000
 # power breakdown, nodes communication details

@@ -69,7 +69,7 @@ SC_MODULE(ProcessingElement)
     //  (valid only for the table based traffic)
 
     int packet_count = 0;
-    int packet_buffer[25][256] = {0};
+    int packet_buffer[64][256] = {0};
     //vector<pair<int, int>> packet_buffer;
 
     void fixRanges(const Coord, Coord &);	// Fix the ranges of the destination
